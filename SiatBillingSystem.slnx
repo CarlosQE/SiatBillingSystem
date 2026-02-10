@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="SiatBillingSystem.API/SiatBillingSystem.API.csproj" />
+  <Project Path="SiatBillingSystem.Application/SiatBillingSystem.Application.csproj" />
+  <Project Path="SiatBillingSystem.Client/SiatBillingSystem.Client.csproj" />
+  <Project Path="SiatBillingSystem.Domain/SiatBillingSystem.Domain.csproj" />
+  <Project Path="SiatBillingSystem.Infrastructure/SiatBillingSystem.Infrastructure.csproj" />
+</Solution>
