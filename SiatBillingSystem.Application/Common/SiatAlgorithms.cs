@@ -11,7 +11,7 @@ namespace SiatBillingSystem.Application.Common
         /// </summary>
         public static string ObtenerModulo11(string cadena, int numDig, int limite, bool x10)
         {
-            int m, s, i, j;
+            int m, s, i; // Se eliminó la variable 'j' que no se utilizaba
             if (!x10) numDig = 1;
 
             for (int n = 1; n <= numDig; n++)
