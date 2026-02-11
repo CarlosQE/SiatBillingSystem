@@ -1,41 +1,51 @@
+using SiatBillingSystem.Application.Interfaces;
+using SiatBillingSystem.Application.Services;
+using SiatBillingSystem.Infrastructure.Interfaces;
+using SiatBillingSystem.Infrastructure.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// --- SECCIÓN DE SERVICIOS (Dependency Injection) ---
+// Aquí registramos nuestras capas para que la API pueda utilizarlas.
+
+builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// 1. Registro de la Capa de Aplicación (Lógica de Negocio)
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+
+// 2. Registro de la Capa de Infraestructura (Firma Digital y externos)
+builder.Services.AddScoped<ISignatureService, SignatureService>();
+
+// 3. Configuración de CORS (Opcional pero recomendado para Blazor Client)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazorClient", policy =>
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader());
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// --- SECCIÓN DE MIDDLEWARE (HTTP Request Pipeline) ---
+// Aquí configuramos cómo se comporta la API cuando recibe una llamada.
+
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// Aplicar la política de CORS
+app.UseCors("AllowBlazorClient");
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.UseAuthorization();
+
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
