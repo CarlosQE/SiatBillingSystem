@@ -1,7 +1,7 @@
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 
-namespace SiatBillingSystem.Infrastructure.Interfaces;
+namespace SiatBillingSystem.Application.Interfaces;
 
 /// <summary>
 /// Contrato para el servicio de Firma Digital XML según estándar W3C DSIG.

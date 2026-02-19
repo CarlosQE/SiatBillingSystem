@@ -1,6 +1,6 @@
 using SiatBillingSystem.Application.Interfaces;
 using SiatBillingSystem.Application.Services;
-using SiatBillingSystem.Infrastructure.Interfaces;
+
 using SiatBillingSystem.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);

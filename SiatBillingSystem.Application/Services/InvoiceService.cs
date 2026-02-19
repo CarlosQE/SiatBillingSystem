@@ -3,7 +3,6 @@ using System.Xml;
 using SiatBillingSystem.Application.Common;
 using SiatBillingSystem.Application.Interfaces;
 using SiatBillingSystem.Domain.Entities;
-using SiatBillingSystem.Infrastructure.Interfaces;
 
 namespace SiatBillingSystem.Application.Services;
 

@@ -1,7 +1,7 @@
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Xml;
-using SiatBillingSystem.Infrastructure.Interfaces;
+using SiatBillingSystem.Application.Interfaces;
 
 namespace SiatBillingSystem.Infrastructure.Services;
 
@@ -97,7 +97,7 @@ public class SignatureService : ISignatureService
         {
             // X509KeyStorageFlags.Exportable: necesario para extraer la clave privada RSA
             // X509KeyStorageFlags.PersistKeySet: evita que la clave se destruya al salir del scope
-            var certificate = new X509Certificate2(
+            var certificate = X509CertificateLoader.LoadPkcs12FromFile(
                 rutaArchivo,
                 password,
                 X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
