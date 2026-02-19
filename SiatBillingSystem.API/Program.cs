@@ -5,47 +5,59 @@ using SiatBillingSystem.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- SECCI�N DE SERVICIOS (Dependency Injection) ---
-// Aqu� registramos nuestras capas para que la API pueda utilizarlas.
+// ═══════════════════════════════════════════════════════════════════════════════
+// SERVICIOS — Contenedor de Inyección de Dependencias (IoC)
+// ═══════════════════════════════════════════════════════════════════════════════
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new()
+    {
+        Title = "SIAT Billing System API",
+        Version = "v1",
+        Description = "API de Facturación Electrónica SIAT — Sector Servicios — Bolivia"
+    });
+});
 
-// 1. Registro de la Capa de Aplicaci�n (L�gica de Negocio)
-builder.Services.AddScoped<IInvoiceService, InvoiceService>();
-
-// 2. Registro de la Capa de Infraestructura (Firma Digital y externos)
+// ── Capa Infrastructure ──
+// Scoped: una instancia por request HTTP (correcto para servicios con estado por request)
 builder.Services.AddScoped<ISignatureService, SignatureService>();
 
-// 3. Configuraci�n de CORS (Opcional pero recomendado para Blazor Client)
+// ── Capa Application ──
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+
+// ── CORS para Blazor Client (SaaS) ──
+// En On-Premise (WPF standalone) este middleware no se usa pero no causa daño
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorClient", policy =>
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader());
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
 });
 
-var app = builder.Build();
+// ═══════════════════════════════════════════════════════════════════════════════
+// PIPELINE DE MIDDLEWARE
+// ═══════════════════════════════════════════════════════════════════════════════
 
-// --- SECCI�N DE MIDDLEWARE (HTTP Request Pipeline) ---
-// Aqu� configuramos c�mo se comporta la API cuando recibe una llamada.
+var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "SIAT Billing v1");
+        options.RoutePrefix = string.Empty; // Swagger en la raíz: https://localhost:xxxx/
+    });
 }
 
 app.UseHttpsRedirection();
-
-// Aplicar la pol�tica de CORS
 app.UseCors("AllowBlazorClient");
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
