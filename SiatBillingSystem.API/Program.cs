@@ -1,8 +1,13 @@
 ﻿using SiatBillingSystem.Application.Interfaces;
 using SiatBillingSystem.Application.Services;
 using SiatBillingSystem.Infrastructure.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Base de datos SQLite
+builder.Services.AddDbContext<SiatBillingSystem.Infrastructure.Persistence.SiatDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
