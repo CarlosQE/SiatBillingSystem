@@ -1,14 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using SiatBillingSystem.Domain.Entities;
-using SiatBillingSystem.Infrastructure.Persistence.Configurations;
 
 namespace SiatBillingSystem.Infrastructure.Persistence;
 
-/// <summary>
-/// DbContext principal del sistema. Usa SQLite para instalaciones On-Premise.
-/// La arquitectura Offline-First requiere que TODOS los datos se persistan
-/// localmente antes de cualquier intento de envío al SIN.
-/// </summary>
 public class SiatDbContext : DbContext
 {
     public SiatDbContext(DbContextOptions<SiatDbContext> options) : base(options) { }
@@ -19,9 +13,15 @@ public class SiatDbContext : DbContext
     public DbSet<ClienteFrecuente> ClientesFrecuentes => Set<ClienteFrecuente>();
     public DbSet<ConfiguracionEmpresa> ConfiguracionEmpresa => Set<ConfiguracionEmpresa>();
 
+    // ── Catálogos del SIN ──
+    public DbSet<TipoDocumentoIdentidad> TiposDocumentoIdentidad => Set<TipoDocumentoIdentidad>();
+    public DbSet<MetodoPago> MetodosPago => Set<MetodoPago>();
+    public DbSet<UnidadMedida> UnidadesMedida => Set<UnidadMedida>();
+    public DbSet<LeyendaFactura> LeyendasFactura => Set<LeyendaFactura>();
+    public DbSet<TipoMoneda> TiposMoneda => Set<TipoMoneda>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Aplicar todas las configuraciones Fluent API desde su carpeta
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(SiatDbContext).Assembly);
         base.OnModelCreating(modelBuilder);
     }
