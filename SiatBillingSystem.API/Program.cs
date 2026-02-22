@@ -1,13 +1,11 @@
-﻿using SiatBillingSystem.Application.Interfaces;
-using SiatBillingSystem.Application.Services;
-using SiatBillingSystem.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using SiatBillingSystem.Application.Interfaces;
+using SiatBillingSystem.Application.Services;
+using SiatBillingSystem.Infrastructure.Persistence;
+using SiatBillingSystem.Infrastructure.Repositories;
+using SiatBillingSystem.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Base de datos SQLite
-builder.Services.AddDbContext<SiatBillingSystem.Infrastructure.Persistence.SiatDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -21,7 +19,13 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddDbContext<SiatDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddScoped<ISignatureService, SignatureService>();
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IConfiguracionRepository, ConfiguracionRepository>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
 builder.Services.AddCors(options =>
