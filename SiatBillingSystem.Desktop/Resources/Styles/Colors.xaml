@@ -1,0 +1,33 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="BgPrimary"      Color="#0F1117"/>
+    <SolidColorBrush x:Key="BgSecondary"    Color="#1A1D2B"/>
+    <SolidColorBrush x:Key="BgCard"         Color="#1E2235"/>
+    <SolidColorBrush x:Key="Sidebar"        Color="#141726"/>
+    <SolidColorBrush x:Key="SidebarHeader"  Color="#0D1020"/>
+    <SolidColorBrush x:Key="TopBar"         Color="#1A1D2B"/>
+
+    <SolidColorBrush x:Key="Accent"         Color="#4F8EF7"/>
+    <SolidColorBrush x:Key="AccentHover"    Color="#6BA3F9"/>
+    <SolidColorBrush x:Key="AccentPressed"  Color="#3A78E6"/>
+
+    <SolidColorBrush x:Key="Success"        Color="#22C55E"/>
+    <SolidColorBrush x:Key="Warning"        Color="#F59E0B"/>
+    <SolidColorBrush x:Key="Danger"         Color="#EF4444"/>
+    <SolidColorBrush x:Key="DangerHover"    Color="#F87171"/>
+
+    <SolidColorBrush x:Key="TextPrimary"    Color="#E8EAF0"/>
+    <SolidColorBrush x:Key="TextSecondary"  Color="#9BA3B8"/>
+    <SolidColorBrush x:Key="TextLight"      Color="#C8CCDA"/>
+    <SolidColorBrush x:Key="TextDisabled"   Color="#4A5068"/>
+
+    <SolidColorBrush x:Key="BorderColor"    Color="#2A2F45"/>
+    <SolidColorBrush x:Key="BorderSubtle"   Color="#1F2538"/>
+    <SolidColorBrush x:Key="BorderAccent"   Color="#3A5A9F"/>
+
+    <SolidColorBrush x:Key="InputBg"        Color="#252A3F"/>
+    <SolidColorBrush x:Key="InputBorder"    Color="#353A55"/>
+    <SolidColorBrush x:Key="InputFocusBorder" Color="#4F8EF7"/>
+
+</ResourceDictionary>
