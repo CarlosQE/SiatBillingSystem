@@ -1,48 +1,73 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Style x:Key="TitleSidebar" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="Segoe UI Semibold"/>
-        <Setter Property="FontSize" Value="14"/>
-        <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
-    </Style>
-
-    <Style x:Key="SubtitleSidebar" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="Segoe UI"/>
-        <Setter Property="FontSize" Value="10"/>
-        <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
-    </Style>
-
-    <Style x:Key="PageTitle" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="Segoe UI Semibold"/>
-        <Setter Property="FontSize" Value="16"/>
-        <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
-    </Style>
-
-    <Style x:Key="SectionHeader" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="Segoe UI Semibold"/>
-        <Setter Property="FontSize" Value="11"/>
-        <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
-    </Style>
-
+    <!-- LABELS de formulario -->
     <Style x:Key="FieldLabel" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontFamily" Value="Segoe UI Semibold"/>
         <Setter Property="FontSize" Value="11"/>
         <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
-        <Setter Property="Margin" Value="0,0,0,3"/>
+        <Setter Property="Margin" Value="0,0,0,4"/>
     </Style>
 
-    <Style x:Key="BodyText" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="Segoe UI"/>
-        <Setter Property="FontSize" Value="12"/>
+    <!-- Título de sección dentro de card -->
+    <Style x:Key="SectionTitle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI Semibold"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+        <Setter Property="Margin" Value="0,0,0,12"/>
+    </Style>
+
+    <!-- Título de página principal -->
+    <Style x:Key="PageTitle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI Light"/>
+        <Setter Property="FontSize" Value="20"/>
         <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
     </Style>
 
-    <Style x:Key="FooterLabel" TargetType="TextBlock">
+    <!-- Badge / chip pequeño -->
+    <Style x:Key="StatusBadge" TargetType="Border">
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="8,2"/>
+        <Setter Property="Background" Value="{StaticResource AccentMuted}"/>
+    </Style>
+
+    <!-- Texto de total grande -->
+    <Style x:Key="TotalAmount" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI Light"/>
+        <Setter Property="FontSize" Value="28"/>
+        <Setter Property="Foreground" Value="{StaticResource Accent}"/>
+        <Setter Property="TextAlignment" Value="Right"/>
+    </Style>
+
+    <!-- Texto de subtotal / línea secundaria -->
+    <Style x:Key="SubtotalAmount" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="Segoe UI"/>
-        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Foreground" Value="{StaticResource TextLight}"/>
+        <Setter Property="TextAlignment" Value="Right"/>
+    </Style>
+
+    <!-- Hint / placeholder visible fuera del input -->
+    <Style x:Key="HintText" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="11"/>
         <Setter Property="Foreground" Value="{StaticResource TextDisabled}"/>
-        <Setter Property="Margin" Value="0,1"/>
+        <Setter Property="FontStyle" Value="Italic"/>
+    </Style>
+
+    <!-- Texto de error inline -->
+    <Style x:Key="ErrorText" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Foreground" Value="{StaticResource Danger}"/>
+        <Setter Property="Margin" Value="0,2,0,0"/>
+    </Style>
+
+    <!-- Separador horizontal -->
+    <Style x:Key="Divider" TargetType="Separator">
+        <Setter Property="Background" Value="{StaticResource BorderColor}"/>
+        <Setter Property="Height" Value="1"/>
+        <Setter Property="Margin" Value="0,8"/>
     </Style>
 
 </ResourceDictionary>

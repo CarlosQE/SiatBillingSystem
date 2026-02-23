@@ -4,51 +4,56 @@
              Background="{StaticResource BgPrimary}">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="16" MaxWidth="700" HorizontalAlignment="Left">
+        <StackPanel Margin="24" MaxWidth="720" HorizontalAlignment="Left">
 
             <!-- SECCIÓN 1: Datos de la Empresa -->
-            <Border Style="{StaticResource CardBorder}" Margin="0,0,0,12">
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,0,14">
                 <StackPanel>
-                    <TextBlock Text="DATOS DE LA EMPRESA" Style="{StaticResource SectionHeader}"
+                    <TextBlock Text="DATOS DE LA EMPRESA"
+                               FontFamily="Segoe UI Semibold" FontSize="11"
+                               Foreground="{StaticResource BrandGray}"
                                Margin="0,0,0,14"/>
 
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
                             <ColumnDefinition Width="160"/>
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                        <StackPanel Grid.Column="0">
                             <TextBlock Text="Razón Social" Style="{StaticResource FieldLabel}"/>
-                            <TextBox Style="{StaticResource PosTextBox}" Margin="0,0,0,10"
+                            <TextBox Style="{StaticResource PosTextBox}"
                                      Text="{Binding RazonSocial, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
-                        <StackPanel Grid.Column="1">
+                        <StackPanel Grid.Column="2">
                             <TextBlock Text="NIT" Style="{StaticResource FieldLabel}"/>
-                            <TextBox Style="{StaticResource PosTextBox}" Margin="0,0,0,10"
+                            <TextBox Style="{StaticResource PosTextBox}"
                                      Text="{Binding Nit, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>
 
-                    <TextBlock Text="Actividad Económica (CAEB)" Style="{StaticResource FieldLabel}"/>
-                    <TextBox Style="{StaticResource PosTextBox}" Margin="0,0,0,10"
-                             Width="200" HorizontalAlignment="Left"
+                    <TextBlock Text="Actividad Económica (CAEB)"
+                               Style="{StaticResource FieldLabel}" Margin="0,10,0,4"/>
+                    <TextBox Style="{StaticResource PosTextBox}"
+                             Width="220" HorizontalAlignment="Left"
                              Text="{Binding ActividadEconomica, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <Grid>
+                    <Grid Margin="0,10,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="160"/>
+                            <ColumnDefinition Width="16"/>
                             <ColumnDefinition Width="160"/>
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                        <StackPanel Grid.Column="0">
                             <TextBlock Text="Código Sucursal" Style="{StaticResource FieldLabel}"/>
                             <TextBox Style="{StaticResource PosTextBoxNumber}"
                                      Text="{Binding CodigoSucursal, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
-                        <StackPanel Grid.Column="1">
+                        <StackPanel Grid.Column="2">
                             <TextBlock Text="Punto de Venta" Style="{StaticResource FieldLabel}"/>
                             <TextBox Style="{StaticResource PosTextBoxNumber}"
                                      Text="{Binding CodigoPuntoVenta, UpdateSourceTrigger=PropertyChanged}"/>
@@ -58,9 +63,11 @@
             </Border>
 
             <!-- SECCIÓN 2: Certificado Digital -->
-            <Border Style="{StaticResource CardBorder}" Margin="0,0,0,12">
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,0,14">
                 <StackPanel>
-                    <TextBlock Text="CERTIFICADO DIGITAL" Style="{StaticResource SectionHeader}"
+                    <TextBlock Text="CERTIFICADO DIGITAL"
+                               FontFamily="Segoe UI Semibold" FontSize="11"
+                               Foreground="{StaticResource BrandGray}"
                                Margin="0,0,0,14"/>
 
                     <TextBlock Text="Archivo .p12 / .pfx (ADSIB o DigiCert)"
@@ -69,13 +76,14 @@
                     <Grid Margin="0,0,0,10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBox Grid.Column="0" Style="{StaticResource PosTextBox}"
-                                 IsReadOnly="True" Margin="0,0,8,0"
+                                 IsReadOnly="True"
                                  Text="{Binding RutaCertificado}"/>
-                        <Button Grid.Column="1" Style="{StaticResource BtnSecondary}"
-                                Height="36" Padding="12,0"
+                        <Button Grid.Column="2" Style="{StaticResource BtnSecondary}"
+                                Height="38" Padding="14,0"
                                 Content="📂 Examinar"
                                 Command="{Binding SeleccionarCertificadoCommand}"/>
                     </Grid>
@@ -83,24 +91,25 @@
                     <TextBlock Text="Contraseña del Certificado" Style="{StaticResource FieldLabel}"/>
                     <PasswordBox Style="{StaticResource PosPasswordBox}"
                                  Width="300" HorizontalAlignment="Left"
-                                 Margin="0,0,0,10"/>
+                                 Margin="0,0,0,12"/>
 
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.Column="0" Padding="10,6" CornerRadius="6"
+                        <Border Grid.Column="0" Padding="12,8" CornerRadius="6"
                                 Background="{StaticResource BgSecondary}"
                                 BorderBrush="{StaticResource BorderColor}" BorderThickness="1">
                             <TextBlock Text="{Binding EstadoCertificado}"
-                                       Style="{StaticResource BodyText}"/>
+                                       FontFamily="Segoe UI" FontSize="12"
+                                       Foreground="{StaticResource TextLight}"/>
                         </Border>
 
-                        <Button Grid.Column="1" Margin="10,0,0,0"
-                                Style="{StaticResource BtnOutline}"
-                                Height="36" Padding="12,0"
+                        <Button Grid.Column="2" Style="{StaticResource BtnOutline}"
+                                Height="38" Padding="14,0"
                                 Content="✓ Validar"
                                 Command="{Binding ValidarCertificadoCommand}"/>
                     </Grid>
@@ -108,17 +117,19 @@
             </Border>
 
             <!-- SECCIÓN 3: Conexión SIAT -->
-            <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,0,20">
                 <StackPanel>
-                    <TextBlock Text="CONEXIÓN SIAT" Style="{StaticResource SectionHeader}"
+                    <TextBlock Text="CONEXIÓN SIAT"
+                               FontFamily="Segoe UI Semibold" FontSize="11"
+                               Foreground="{StaticResource BrandGray}"
                                Margin="0,0,0,14"/>
 
                     <TextBlock Text="Ambiente" Style="{StaticResource FieldLabel}"/>
                     <ComboBox Style="{StaticResource PosComboBox}"
-                              Width="200" HorizontalAlignment="Left"
-                              Margin="0,0,0,10"
+                              Width="220" HorizontalAlignment="Left"
+                              Margin="0,0,0,12"
                               SelectedValue="{Binding AmbienteSiat}">
-                        <ComboBoxItem Content="Piloto (Pruebas)" Tag="Piloto" IsSelected="True"/>
+                        <ComboBoxItem Content="Piloto (Pruebas)" Tag="Piloto"/>
                         <ComboBoxItem Content="Producción" Tag="Produccion"/>
                     </ComboBox>
 
@@ -126,26 +137,30 @@
                               FontFamily="Segoe UI" FontSize="12"
                               IsChecked="{Binding ModoOfflineForzado}"
                               Content="Forzar modo offline (no enviar al SIN)"
-                              Margin="0,0,0,4"/>
+                              Margin="0,0,0,8"/>
 
-                    <TextBlock Style="{StaticResource FooterLabel}" TextWrapping="Wrap"
+                    <TextBlock FontFamily="Segoe UI" FontSize="11"
+                               Foreground="{StaticResource TextSecondary}"
+                               TextWrapping="Wrap"
                                Text="En modo offline las facturas se guardan localmente y se sincronizan cuando haya conexión."/>
                 </StackPanel>
             </Border>
 
-            <!-- Botón Guardar + Mensaje -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                <Button Style="{StaticResource BtnPrimary}" Height="42" Padding="24,0"
-        Margin="0,0,12,0"
-        Content="💾 Guardar Configuración"
-        Command="{Binding GuardarConfiguracionCommand}"/>
+            <!-- Guardar -->
+            <StackPanel Orientation="Horizontal">
+                <Button Style="{StaticResource BtnPrimary}" Height="44" Padding="24,0"
+                        Margin="0,0,12,0"
+                        Content="💾 Guardar Configuración"
+                        Command="{Binding GuardarConfiguracionCommand}"/>
 
-                <Border Padding="12,0" CornerRadius="6" VerticalAlignment="Center"
-                        Visibility="{Binding GuardadoExitoso, Converter={StaticResource BoolToVisibility}}"
-                        Background="#1A22C55E">
+                <Border Padding="14,0" CornerRadius="6" VerticalAlignment="Center"
+                        Visibility="{Binding GuardadoExitoso,
+                            Converter={StaticResource BoolToVisibility}}"
+                        Background="{StaticResource AccentMuted}">
                     <TextBlock Text="{Binding MensajeEstado}"
-                               Foreground="{StaticResource Success}"
-                               FontSize="12" VerticalAlignment="Center"/>
+                               Foreground="{StaticResource Accent}"
+                               FontFamily="Segoe UI" FontSize="12"
+                               VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 
