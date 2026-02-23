@@ -1,7 +1,7 @@
 using System.Windows;
 using SiatBillingSystem.Desktop.ViewModels;
 
-namespace SiatBillingSystem.Desktop.Views;
+namespace SiatBillingSystem.Desktop;
 
 public partial class MainWindow : Window
 {

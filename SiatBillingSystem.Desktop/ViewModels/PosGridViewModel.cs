@@ -52,7 +52,7 @@ public partial class PosGridViewModel : ObservableObject
     private int _metodoPago = 1;
 
     [ObservableProperty]
-    private string _leyendaFactura = "Ley N° 453: Usted tiene derecho a recibir información veraz, suficiente y oportuna.";
+    private string _leyendaFactura = "Ley N 453: Usted tiene derecho a recibir informacion veraz, suficiente y oportuna.";
 
     public bool PuedeEmitir =>
         !string.IsNullOrWhiteSpace(NitCliente) && Items.Count > 0;
@@ -104,7 +104,7 @@ public partial class PosGridViewModel : ObservableObject
     {
         EstadoEnvio = "Guardando localmente...";
         await Task.Delay(150);
-        EstadoEnvio = "✓ Guardado localmente — pendiente sincronización SIAT";
+        EstadoEnvio = "Guardado localmente - pendiente sincronizacion SIAT";
         NuevaFactura();
     }
 
@@ -150,4 +150,14 @@ public partial class PosGridViewModel : ObservableObject
 public partial class DetalleFacturaItem : ObservableObject
 {
     [ObservableProperty] private int _numero;
-    [ObservableProperty] private st
+    [ObservableProperty] private string _descripcion = string.Empty;
+    [ObservableProperty] private decimal _cantidad;
+    [ObservableProperty] private decimal _precioUnitario;
+    [ObservableProperty] private decimal _subtotal;
+
+    partial void OnCantidadChanged(decimal value) =>
+        Subtotal = value * PrecioUnitario;
+
+    partial void OnPrecioUnitarioChanged(decimal value) =>
+        Subtotal = Cantidad * value;
+}
