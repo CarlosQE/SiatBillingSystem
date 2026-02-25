@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -138,7 +138,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
             SetStatus($"✓ Factura emitida — Total: Bs. {MontoTotal:N2}", false);
         }
 
-        [RelayCommand]
+       [RelayCommand]
 private void BuscarCliente()
 {
     NitError = string.Empty;
@@ -147,22 +147,8 @@ private void BuscarCliente()
         NitError = "Ingresa el NIT para buscar.";
         return;
     }
-
-    // Búsqueda local en clientes frecuentes
-    // Sprint 3: reemplazar con IClienteRepository.BuscarPorNitAsync()
-    var clientesVm = new ClientesViewModel();
-    var encontrado = clientesVm.Clientes
-        .FirstOrDefault(c => c.Nit == NitCliente.Trim());
-
-    if (encontrado is not null)
-    {
-        NombreCliente = encontrado.Nombre;
-        SetStatus($"✓ Cliente encontrado: {encontrado.Nombre}", false);
-    }
-    else
-    {
-        SetStatus($"NIT {NitCliente} no encontrado. Ingresa el nombre manualmente.", false);
-    }
+    // Sprint 3: conectar con IClienteRepository.ObtenerPorDocumentoAsync()
+    SetStatus($"Buscar NIT {NitCliente} disponible en Sprint 3.", false);
 }
 
         // ── Validaciones ─────────────────────────────────────────

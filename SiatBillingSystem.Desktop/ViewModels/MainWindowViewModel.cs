@@ -1,55 +1,58 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using SiatBillingSystem.Infrastructure.Persistence;
 
-namespace SiatBillingSystem.Desktop.ViewModels;
-
-public partial class MainWindowViewModel : ObservableObject
+namespace SiatBillingSystem.Desktop.ViewModels
 {
-    private readonly IServiceProvider _services;
-
-    [ObservableProperty]
-    private ObservableObject? _currentViewModel;
-
-    [ObservableProperty]
-    private string _currentPageTitle = "Grilla POS";
-
-    [ObservableProperty]
-    private string _empresaNombre = "Mi Empresa";
-
-    [ObservableProperty]
-    private string _nitEmpresa = "";
-
-    [ObservableProperty]
-    private bool _isMenuExpanded = true;
-
-    public MainWindowViewModel(IServiceProvider services)
+    public partial class MainWindowViewModel : ObservableObject
     {
-        _services = services;
-        NavigateToPosCommand.Execute(null);
-    }
+        private PosGridViewModel? _posVm;
+        private ClientesViewModel? _clientesVm;
+        private ConfiguracionViewModel? _configuracionVm;
 
-    [RelayCommand]
-    private void NavigateToPos()
-    {
-        CurrentViewModel = _services.GetRequiredService<PosGridViewModel>();
-        CurrentPageTitle = "Grilla de Facturación POS";
-    }
+        [ObservableProperty] private ObservableObject? _currentViewModel;
+        [ObservableProperty] private string _currentPageTitle = "Grilla POS";
+        [ObservableProperty] private string _empresaNombre = "Mi Empresa";
+        [ObservableProperty] private string _nitEmpresa = "";
+        [ObservableProperty] private bool _isMenuExpanded = true;
 
-    [RelayCommand]
-    private void NavigateToClientes()
-    {
-        CurrentViewModel = _services.GetRequiredService<ClientesViewModel>();
-        CurrentPageTitle = "Clientes Frecuentes";
-    }
+        public MainWindowViewModel() { }
 
-    [RelayCommand]
-    private void NavigateToConfiguracion()
-    {
-        CurrentViewModel = _services.GetRequiredService<ConfiguracionViewModel>();
-        CurrentPageTitle = "Configuración de Empresa";
-    }
+        public void SetDbFactory(IDbContextFactory<SiatDbContext> factory)
+        {
+            _posVm = new PosGridViewModel();
+            _clientesVm = new ClientesViewModel(factory);
+            _configuracionVm = new ConfiguracionViewModel(factory);
+        }
 
-    [RelayCommand]
-    private void ToggleMenu() => IsMenuExpanded = !IsMenuExpanded;
+        public void Initialize()
+        {
+            NavigateToPos();
+        }
+
+        [RelayCommand]
+        private void NavigateToPos()
+        {
+            CurrentViewModel = _posVm ??= new PosGridViewModel();
+            CurrentPageTitle = "Grilla de Facturacion POS";
+        }
+
+        [RelayCommand]
+        private void NavigateToClientes()
+        {
+            CurrentViewModel = _clientesVm;
+            CurrentPageTitle = "Clientes Frecuentes";
+        }
+
+        [RelayCommand]
+        private void NavigateToConfiguracion()
+        {
+            CurrentViewModel = _configuracionVm;
+            CurrentPageTitle = "Configuracion de Empresa";
+        }
+
+        [RelayCommand]
+        private void ToggleMenu() => IsMenuExpanded = !IsMenuExpanded;
+    }
 }

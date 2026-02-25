@@ -1,11 +1,12 @@
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
-namespace SiatBillingSystem.Desktop.Views;
-
-public partial class ClientesView : UserControl
+namespace SiatBillingSystem.Desktop.Views
 {
-    public ClientesView()
+    public partial class ClientesView : UserControl
     {
-        InitializeComponent();
+        public ClientesView()
+        {
+            InitializeComponent();
+        }
     }
 }

@@ -16,16 +16,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.3"/>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.3"/>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.3"/>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.3" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SiatBillingSystem.Domain\SiatBillingSystem.Domain.csproj"/>
-    <ProjectReference Include="..\SiatBillingSystem.Application\SiatBillingSystem.Application.csproj"/>
-    <ProjectReference Include="..\SiatBillingSystem.Infrastructure\SiatBillingSystem.Infrastructure.csproj"/>
+    <ProjectReference Include="..\SiatBillingSystem.Domain\SiatBillingSystem.Domain.csproj" />
+    <ProjectReference Include="..\SiatBillingSystem.Application\SiatBillingSystem.Application.csproj" />
+    <ProjectReference Include="..\SiatBillingSystem.Infrastructure\SiatBillingSystem.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

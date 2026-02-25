@@ -1,7 +1,8 @@
 ﻿<Application x:Class="SiatBillingSystem.Desktop.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:converters="clr-namespace:SiatBillingSystem.Desktop.Converters">
+             xmlns:converters="clr-namespace:SiatBillingSystem.Desktop.Converters"
+             xmlns:system="clr-namespace:System;assembly=mscorlib">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -11,9 +12,15 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Converters globales -->
+            <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
             <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
-            <converters:BoolToWidthConverter x:Key="SidebarWidthConverter"
+
+            <!-- Sidebar principal: 220px expandido / 60px contraído -->
+            <converters:BoolToWidthConverter x:Key="MenuWidthConverter"
                                              TrueValue="220" FalseValue="60"/>
+            <!-- Panel edición clientes: 320px visible / 0px oculto -->
+            <converters:BoolToWidthConverter x:Key="BoolToWidthConverter320"
+                                             TrueValue="320" FalseValue="0"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

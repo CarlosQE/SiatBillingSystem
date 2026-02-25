@@ -480,3 +480,7 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# SQLite local database
+siat.db
+SiatBillingSystem.Desktop/siat.db

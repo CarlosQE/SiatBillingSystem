@@ -1,21 +1,16 @@
-<UserControl x:Class="SiatBillingSystem.Desktop.Views.ClientesView"
+﻿<UserControl x:Class="SiatBillingSystem.Desktop.Views.ClientesView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="clr-namespace:SiatBillingSystem.Desktop.ViewModels"
-             Background="{StaticResource BgPrimary}">
-
-    <UserControl.DataContext>
-        <vm:ClientesViewModel/>
-    </UserControl.DataContext>
+             Background="{StaticResource BgPrimary}"
+             x:Name="Root">
 
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="{Binding ModoEdicion,
-                Converter={StaticResource BoolToWidthConverter320}}"/>
+            <ColumnDefinition Width="{Binding ModoEdicion, Converter={StaticResource BoolToWidthConverter320}}"/>
         </Grid.ColumnDefinitions>
 
-        <!-- ── Lista ── -->
+        <!-- Lista -->
         <Grid Grid.Column="0" Margin="0,0,12,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -24,7 +19,6 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Header -->
             <Grid Grid.Row="0" Margin="0,0,0,14">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -37,27 +31,15 @@
                         Command="{Binding NuevoClienteCommand}"/>
             </Grid>
 
-            <!-- Buscador -->
-            <Border Grid.Row="1" Style="{StaticResource CardBorder}"
-                    Padding="10,8" Margin="0,0,0,10">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="⌕" FontSize="16" Foreground="{StaticResource BrandGray}"
-                               VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <TextBox Grid.Column="1"
-                             Text="{Binding Filtro, UpdateSourceTrigger=PropertyChanged}"
-                             Style="{StaticResource PosTextBox}"
-                             Height="34"
-                             ToolTip="Buscar por NIT o nombre"/>
-                </Grid>
+            <Border Grid.Row="1" Style="{StaticResource CardBorder}" Padding="10,8" Margin="0,0,0,10">
+                <TextBox Text="{Binding Filtro, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource PosTextBox}" Height="34"
+                         ToolTip="Buscar por NIT o nombre"/>
             </Border>
 
-            <!-- DataGrid -->
             <Border Grid.Row="2" Style="{StaticResource CardBorder}" Padding="0">
-                <DataGrid Style="{StaticResource PosDataGrid}"
+                <DataGrid x:Name="GridClientes"
+                          Style="{StaticResource PosDataGrid}"
                           ColumnHeaderStyle="{StaticResource DataGridColumnHeader}"
                           RowStyle="{StaticResource DataGridRow}"
                           CellStyle="{StaticResource DataGridCell}"
@@ -68,34 +50,29 @@
                           CanUserDeleteRows="False"
                           IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="NIT/CI"
-                                            Binding="{Binding Nit}" Width="120"/>
-                        <DataGridTextColumn Header="Nombre / Razón Social"
-                                            Binding="{Binding Nombre}" Width="*"/>
-                        <DataGridTextColumn Header="Email"
-                                            Binding="{Binding Email}" Width="180"/>
-                        <DataGridTextColumn Header="Teléfono"
-                                            Binding="{Binding Telefono}" Width="110"/>
-                        <DataGridTextColumn Header="Facturas"
-                                            Binding="{Binding TotalFacturas}" Width="70"/>
+                        <DataGridTextColumn Header="NIT/CI" Binding="{Binding NumeroDocumento}" Width="120"/>
+                        <DataGridTextColumn Header="Nombre / Razon Social" Binding="{Binding NombreRazonSocial}" Width="*"/>
+                        <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="180"/>
+                        <DataGridTextColumn Header="Telefono" Binding="{Binding Telefono}" Width="110"/>
+                        <DataGridTextColumn Header="Facturas" Binding="{Binding TotalFacturas}" Width="70"/>
                         <DataGridTemplateColumn Header="Acciones" Width="90">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Content="✏"
+                                        <Button Content="E"
                                                 Style="{StaticResource BtnOutlineSmall}"
                                                 Margin="0,0,4,0"
                                                 Command="{Binding DataContext.EditarClienteCommand,
                                                     RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding}"
-                                                ToolTip="Editar cliente"/>
-                                        <Button Content="✕"
+                                                ToolTip="Editar"/>
+                                        <Button Content="X"
                                                 Style="{StaticResource BtnDanger}"
                                                 Width="26" Height="26"
                                                 Command="{Binding DataContext.EliminarClienteCommand,
                                                     RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding}"
-                                                ToolTip="Eliminar cliente"/>
+                                                ToolTip="Eliminar"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -104,32 +81,25 @@
                 </DataGrid>
             </Border>
 
-            <!-- Status bar -->
             <Border Grid.Row="3" Padding="12,8" CornerRadius="6" Margin="0,8,0,0"
-                    Visibility="{Binding StatusMessage,
-                        Converter={StaticResource StringToVisibilityConverter}}">
+                    Visibility="{Binding StatusMessage, Converter={StaticResource StringToVisibilityConverter}}">
                 <Border.Style>
                     <Style TargetType="Border">
+                        <Setter Property="Background" Value="{StaticResource AccentMuted}"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsStatusError}" Value="True">
                                 <Setter Property="Background" Value="{StaticResource DangerMuted}"/>
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding IsStatusError}" Value="False">
-                                <Setter Property="Background" Value="{StaticResource AccentMuted}"/>
-                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
-                <TextBlock Text="{Binding StatusMessage}"
-                           FontFamily="Segoe UI" FontSize="12">
+                <TextBlock Text="{Binding StatusMessage}" FontFamily="Segoe UI" FontSize="12">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{StaticResource Accent}"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsStatusError}" Value="True">
                                     <Setter Property="Foreground" Value="{StaticResource Danger}"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsStatusError}" Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource Accent}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -138,16 +108,14 @@
             </Border>
         </Grid>
 
-        <!-- ── Panel Edición deslizante ── -->
-        <Border Grid.Column="1"
-                Style="{StaticResource CardBorder}"
+        <!-- Panel Edicion -->
+        <Border Grid.Column="1" Style="{StaticResource CardBorder}"
                 Visibility="{Binding ModoEdicion, Converter={StaticResource BoolToVisibility}}"
                 Margin="0">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <TextBlock FontFamily="Segoe UI Semibold" FontSize="13"
-                               Foreground="{StaticResource TextPrimary}"
-                               Margin="0,0,0,16">
+                               Foreground="{StaticResource TextPrimary}" Margin="0,0,0,16">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Text" Value="Editar Cliente"/>
@@ -164,25 +132,21 @@
                     <TextBox Text="{Binding EditNit, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource PosTextBox}" Margin="0,0,0,2"/>
                     <TextBlock Text="{Binding EditNitError}" Style="{StaticResource ErrorText}"
-                               Visibility="{Binding EditNitError,
-                                   Converter={StaticResource StringToVisibilityConverter}}"
+                               Visibility="{Binding EditNitError, Converter={StaticResource StringToVisibilityConverter}}"
                                Margin="0,0,0,8"/>
 
-                    <TextBlock Text="Nombre / Razón Social" Style="{StaticResource FieldLabel}"
-                               Margin="0,6,0,0"/>
+                    <TextBlock Text="Nombre / Razon Social" Style="{StaticResource FieldLabel}" Margin="0,6,0,0"/>
                     <TextBox Text="{Binding EditNombre, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource PosTextBox}" Margin="0,0,0,2"/>
                     <TextBlock Text="{Binding EditNombreError}" Style="{StaticResource ErrorText}"
-                               Visibility="{Binding EditNombreError,
-                                   Converter={StaticResource StringToVisibilityConverter}}"
+                               Visibility="{Binding EditNombreError, Converter={StaticResource StringToVisibilityConverter}}"
                                Margin="0,0,0,8"/>
 
-                    <TextBlock Text="Email" Style="{StaticResource FieldLabel}"
-                               Margin="0,6,0,0"/>
+                    <TextBlock Text="Email" Style="{StaticResource FieldLabel}" Margin="0,6,0,0"/>
                     <TextBox Text="{Binding EditEmail, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource PosTextBox}" Margin="0,0,0,10"/>
 
-                    <TextBlock Text="Teléfono" Style="{StaticResource FieldLabel}"/>
+                    <TextBlock Text="Telefono" Style="{StaticResource FieldLabel}"/>
                     <TextBox Text="{Binding EditTelefono, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource PosTextBox}" Margin="0,0,0,20"/>
 
@@ -193,12 +157,10 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Button Grid.Column="0" Content="Cancelar"
-                                Style="{StaticResource BtnSecondary}"
-                                Height="38"
+                                Style="{StaticResource BtnSecondary}" Height="38"
                                 Command="{Binding CancelarEdicionCommand}"/>
-                        <Button Grid.Column="2" Content="💾 Guardar"
-                                Style="{StaticResource BtnPrimary}"
-                                Height="38"
+                        <Button Grid.Column="2" Content="Guardar"
+                                Style="{StaticResource BtnPrimary}" Height="38"
                                 Command="{Binding GuardarClienteCommand}"/>
                     </Grid>
                 </StackPanel>

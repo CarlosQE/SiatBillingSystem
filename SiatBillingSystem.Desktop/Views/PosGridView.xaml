@@ -4,11 +4,7 @@
              xmlns:vm="clr-namespace:SiatBillingSystem.Desktop.ViewModels"
              Background="{StaticResource BgPrimary}">
 
-    <UserControl.DataContext>
-        <vm:PosGridViewModel/>
-    </UserControl.DataContext>
-
-    <UserControl.InputBindings>
+        <UserControl.InputBindings>
         <KeyBinding Key="F9" Command="{Binding AgregarItemCommand}"/>
         <KeyBinding Key="F5" Command="{Binding EmitirFacturaCommand}"/>
         <KeyBinding Key="F2" Command="{Binding NuevaFacturaCommand}"/>

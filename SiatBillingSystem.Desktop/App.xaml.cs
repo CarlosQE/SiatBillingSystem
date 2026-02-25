@@ -1,71 +1,57 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SiatBillingSystem.Application.Interfaces;
-using SiatBillingSystem.Application.Services;
 using SiatBillingSystem.Desktop.ViewModels;
 using SiatBillingSystem.Desktop.Views;
 using SiatBillingSystem.Infrastructure.Persistence;
-using SiatBillingSystem.Infrastructure.Repositories;
-using SiatBillingSystem.Infrastructure.Services;
 using System.Windows;
 using WpfApplication = System.Windows.Application;
-namespace SiatBillingSystem.Desktop;
 
-public partial class App : WpfApplication
+namespace SiatBillingSystem.Desktop
 {
-    private readonly IHost _host;
-
-    public App()
+    public partial class App : WpfApplication
     {
-        _host = Host.CreateDefaultBuilder()
-            .ConfigureServices((context, services) =>
-            {
-                // ── Base de datos ──
-                services.AddDbContext<SiatDbContext>(options =>
-                    options.UseSqlite("Data Source=siat.db"));
+        private readonly IHost _host;
 
-                // ── Repositorios ──
-                services.AddScoped<IInvoiceRepository, InvoiceRepository>();
-                services.AddScoped<IClienteRepository, ClienteRepository>();
-                services.AddScoped<IConfiguracionRepository, ConfiguracionRepository>();
+        public App()
+        {
+            _host = Host.CreateDefaultBuilder()
+                .ConfigureServices((context, services) =>
+                {
+                    // DbContext factory — permite crear instancias bajo demanda desde ViewModels
+                    services.AddDbContextFactory<SiatDbContext>(options =>
+                        options.UseSqlite("Data Source=siat.db"));
 
-                // ── Servicios ──
-                services.AddScoped<ISignatureService, SignatureService>();
-                services.AddScoped<IInvoiceService, InvoiceService>();
+                    // ViewModels y ventana principal
+                    services.AddSingleton<MainWindowViewModel>();
+                    services.AddSingleton<MainWindow>();
+                })
+                .Build();
+        }
 
-                // ── ViewModels ──
-                services.AddTransient<PosGridViewModel>();
-                services.AddTransient<ClientesViewModel>();
-                services.AddTransient<ConfiguracionViewModel>();
-                services.AddSingleton<MainWindowViewModel>();
+        protected override async void OnStartup(StartupEventArgs e)
+        {
+            await _host.StartAsync();
 
-                // ── Ventana principal ──
-                services.AddSingleton<MainWindow>();
-            })
-            .Build();
-    }
+            // Migraciones automáticas
+            var factory = _host.Services.GetRequiredService<IDbContextFactory<SiatDbContext>>();
+            using var db = await factory.CreateDbContextAsync();
+            await db.Database.MigrateAsync();
 
-    protected override async void OnStartup(StartupEventArgs e)
-    {
-        await _host.StartAsync();
+            // Pasar factory al MainWindowViewModel antes de mostrar
+            var vm = _host.Services.GetRequiredService<MainWindowViewModel>();
+            vm.SetDbFactory(factory);
 
-        // Aplicar migraciones automáticamente al iniciar
-        using var scope = _host.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<SiatDbContext>();
-        await db.Database.MigrateAsync();
+            var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+            mainWindow.Show();
+            base.OnStartup(e);
+        }
 
-        // Mostrar ventana principal
-        var mainWindow = _host.Services.GetRequiredService<MainWindow>();
-        mainWindow.Show();
-
-        base.OnStartup(e);
-    }
-
-    protected override async void OnExit(ExitEventArgs e)
-    {
-        await _host.StopAsync();
-        _host.Dispose();
-        base.OnExit(e);
+        protected override async void OnExit(ExitEventArgs e)
+        {
+            await _host.StopAsync();
+            _host.Dispose();
+            base.OnExit(e);
+        }
     }
 }
