@@ -10,368 +10,370 @@
         <KeyBinding Key="F2" Command="{Binding NuevaFacturaCommand}"/>
     </UserControl.InputBindings>
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-
-        <!-- ── Header ── -->
-        <Grid Grid.Row="0" Margin="0,0,0,16">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-
-            <StackPanel>
-                <TextBlock Text="Nueva Factura" Style="{StaticResource PageTitle}"/>
-                <TextBlock Foreground="{StaticResource TextSecondary}" FontSize="11" Margin="0,2,0,0">
-                    <Run Text="F9 Agregar ítem"/>
-                    <Run Text="  |  "/>
-                    <Run Text="F5 Emitir"/>
-                    <Run Text="  |  "/>
-                    <Run Text="F2 Nueva"/>
-                </TextBlock>
-            </StackPanel>
-
-            <Button Grid.Column="1" Content="F2  Nueva Factura"
-                    Style="{StaticResource BtnSecondary}"
-                    Height="34" Padding="16,0"
-                    Command="{Binding NuevaFacturaCommand}"/>
-        </Grid>
-
-        <!-- ── Datos del Cliente ── -->
-        <Border Grid.Row="1" Style="{StaticResource CardBorder}" Margin="0,0,0,12">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="180"/>
-                    <ColumnDefinition Width="16"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="16"/>
-                    <ColumnDefinition Width="160"/>
-                    <ColumnDefinition Width="16"/>
-                    <ColumnDefinition Width="40"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- NIT -->
-                <TextBlock Grid.Row="0" Grid.Column="0"
-                           Text="NIT / CI Cliente" Style="{StaticResource FieldLabel}"/>
-                <TextBlock Grid.Row="0" Grid.Column="2"
-                           Text="Nombre / Razón Social" Style="{StaticResource FieldLabel}"/>
-                <TextBlock Grid.Row="0" Grid.Column="4"
-                           Text="Método de Pago" Style="{StaticResource FieldLabel}"/>
-
-                <Grid Grid.Row="1" Grid.Column="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="38"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <TextBox Grid.Row="0"
-                             Text="{Binding NitCliente, UpdateSourceTrigger=PropertyChanged}"
-                             Style="{StaticResource PosTextBox}"
-                             ToolTip="NIT o Cédula de Identidad del cliente"/>
-                    <TextBlock Grid.Row="1" Text="{Binding NitError}"
-                               Style="{StaticResource ErrorText}"
-                               Visibility="{Binding NitError,
-                                   Converter={StaticResource StringToVisibilityConverter}}"/>
-                </Grid>
-
-                <!-- Nombre -->
-                <Grid Grid.Row="1" Grid.Column="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="38"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <TextBox Grid.Row="0"
-                             Text="{Binding NombreCliente, UpdateSourceTrigger=PropertyChanged}"
-                             Style="{StaticResource PosTextBox}"
-                             ToolTip="Nombre completo o razón social"/>
-                    <TextBlock Grid.Row="1" Text="{Binding NombreError}"
-                               Style="{StaticResource ErrorText}"
-                               Visibility="{Binding NombreError,
-                                   Converter={StaticResource StringToVisibilityConverter}}"/>
-                </Grid>
-
-                <!-- Método Pago -->
-                <ComboBox Grid.Row="1" Grid.Column="4"
-                          Style="{StaticResource PosComboBox}"
-                          ItemsSource="{Binding MetodosPago}"
-                          SelectedItem="{Binding MetodoPagoSeleccionado}"
-                          DisplayMemberPath="Descripcion"
-                          ToolTip="Forma de pago del cliente"/>
-
-                <!-- Buscar -->
-                <Button Grid.Row="1" Grid.Column="6"
-                        Width="40" Height="38"
-                        Style="{StaticResource BtnOutline}"
-                        Command="{Binding BuscarClienteCommand}"
-                        ToolTip="Buscar cliente por NIT (F3)">
-                    <TextBlock Text="⌕" FontSize="16"
-                               Foreground="{StaticResource Accent}"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"/>
-                </Button>
-            </Grid>
-        </Border>
-
-        <!-- ── Área Central: Ítem + Grid ── -->
-        <Grid Grid.Row="2">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" MinHeight="150"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Formulario ítem -->
-            <Border Grid.Row="0" Style="{StaticResource CardBorderAccent}" Margin="0,0,0,8" Padding="16,10,16,10">
+            <!-- ── Header ── -->
+            <Grid Grid.Row="0" Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <TextBlock Text="Nueva Factura" Style="{StaticResource PageTitle}"/>
+                    <TextBlock Foreground="{StaticResource TextSecondary}" FontSize="11" Margin="0,2,0,0">
+                        <Run Text="F9 Agregar ítem"/>
+                        <Run Text="  |  "/>
+                        <Run Text="F5 Emitir"/>
+                        <Run Text="  |  "/>
+                        <Run Text="F2 Nueva"/>
+                    </TextBlock>
+                </StackPanel>
+
+                <Button Grid.Column="1" Content="F2  Nueva Factura"
+                        Style="{StaticResource BtnSecondary}"
+                        Height="34" Padding="16,0"
+                        Command="{Binding NuevaFacturaCommand}"/>
+            </Grid>
+
+            <!-- ── Datos del Cliente ── -->
+            <Border Grid.Row="1" Style="{StaticResource CardBorder}" Margin="0,0,0,12">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="38"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="180"/>
+                        <ColumnDefinition Width="16"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="12"/>
-                        <ColumnDefinition Width="90"/>
-                        <ColumnDefinition Width="12"/>
-                        <ColumnDefinition Width="110"/>
-                        <ColumnDefinition Width="12"/>
-                        <ColumnDefinition Width="90"/>
-                        <ColumnDefinition Width="12"/>
-                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="40"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Labels fila 0 -->
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Descripción del Servicio" Style="{StaticResource FieldLabel}"/>
-                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Cantidad" Style="{StaticResource FieldLabel}"/>
-                    <TextBlock Grid.Row="0" Grid.Column="4" Text="Precio Unitario (Bs.)" Style="{StaticResource FieldLabel}"/>
-                    <TextBlock Grid.Row="0" Grid.Column="6" Text="Descuento (Bs.)" Style="{StaticResource FieldLabel}"/>
+                    <!-- NIT -->
+                    <TextBlock Grid.Row="0" Grid.Column="0"
+                            Text="NIT / CI Cliente" Style="{StaticResource FieldLabel}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2"
+                            Text="Nombre / Razón Social" Style="{StaticResource FieldLabel}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="4"
+                            Text="Método de Pago" Style="{StaticResource FieldLabel}"/>
 
-                    <!-- Inputs fila 1 -->
-                    <TextBox Grid.Row="1" Grid.Column="0"
-                            Text="{Binding Descripcion, UpdateSourceTrigger=PropertyChanged}"
-                            ToolTip="{Binding DescripcionError}">
-                        <TextBox.Style>
-                            <Style TargetType="TextBox" BasedOn="{StaticResource PosTextBox}">
-                                <Setter Property="BorderBrush" Value="{StaticResource Danger}"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding DescripcionError}" Value="">
-                                        <Setter Property="BorderBrush" Value="{StaticResource InputBorder}"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
+                    <Grid Grid.Row="1" Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="38"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBox Grid.Row="0"
+                                Text="{Binding NitCliente, UpdateSourceTrigger=PropertyChanged}"
+                                Style="{StaticResource PosTextBox}"
+                                ToolTip="NIT o Cédula de Identidad del cliente"/>
+                        <TextBlock Grid.Row="1" Text="{Binding NitError}"
+                                Style="{StaticResource ErrorText}"
+                                Visibility="{Binding NitError,
+                                    Converter={StaticResource StringToVisibilityConverter}}"/>
+                    </Grid>
 
-                    <TextBox Grid.Row="1" Grid.Column="2"
-                            Text="{Binding Cantidad, UpdateSourceTrigger=PropertyChanged}"
-                            ToolTip="{Binding CantidadError}">
-                        <TextBox.Style>
-                            <Style TargetType="TextBox" BasedOn="{StaticResource PosTextBoxNumber}">
-                                <Setter Property="BorderBrush" Value="{StaticResource Danger}"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding CantidadError}" Value="">
-                                        <Setter Property="BorderBrush" Value="{StaticResource InputBorder}"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
+                    <!-- Nombre -->
+                    <Grid Grid.Row="1" Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="38"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBox Grid.Row="0"
+                                Text="{Binding NombreCliente, UpdateSourceTrigger=PropertyChanged}"
+                                Style="{StaticResource PosTextBox}"
+                                ToolTip="Nombre completo o razón social"/>
+                        <TextBlock Grid.Row="1" Text="{Binding NombreError}"
+                                Style="{StaticResource ErrorText}"
+                                Visibility="{Binding NombreError,
+                                    Converter={StaticResource StringToVisibilityConverter}}"/>
+                    </Grid>
 
-                    <TextBox Grid.Row="1" Grid.Column="4"
-                            Text="{Binding PrecioUnitario, UpdateSourceTrigger=PropertyChanged}"
-                            ToolTip="{Binding PrecioError}">
-                        <TextBox.Style>
-                            <Style TargetType="TextBox" BasedOn="{StaticResource PosTextBoxNumber}">
-                                <Setter Property="BorderBrush" Value="{StaticResource Danger}"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding PrecioError}" Value="">
-                                        <Setter Property="BorderBrush" Value="{StaticResource InputBorder}"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
+                    <!-- Método Pago -->
+                    <ComboBox Grid.Row="1" Grid.Column="4"
+                            Style="{StaticResource PosComboBox}"
+                            ItemsSource="{Binding MetodosPago}"
+                            SelectedItem="{Binding MetodoPagoSeleccionado}"
+                            DisplayMemberPath="Descripcion"
+                            ToolTip="Forma de pago del cliente"/>
 
-                    <TextBox Grid.Row="1" Grid.Column="6"
-                            Text="{Binding Descuento, UpdateSourceTrigger=PropertyChanged}"
-                            Style="{StaticResource PosTextBoxNumber}"
-                            ToolTip="Descuento en bolivianos (opcional)"/>
-
-                    <Button Grid.Row="1" Grid.Column="8"
-                            Content="F9  Agregar"
-                            Style="{StaticResource BtnPrimary}"
-                            Height="38" Padding="12,0"
-                            Command="{Binding AgregarItemCommand}"
-                            ToolTip="Agregar ítem a la factura (F9)"/>
-
-                    <TextBlock Grid.Row="2" Grid.Column="0"
-                            Text="{Binding DescripcionError}"
-                            Style="{StaticResource ErrorText}" FontSize="10"
-                            TextWrapping="Wrap"
-                            Visibility="{Binding DescripcionError, Converter={StaticResource StringToVisibilityConverter}}"/>
-                    <TextBlock Grid.Row="2" Grid.Column="2"
-                            Text="{Binding CantidadError}"
-                            Style="{StaticResource ErrorText}" FontSize="10"
-                            TextWrapping="Wrap"
-                            Visibility="{Binding CantidadError, Converter={StaticResource StringToVisibilityConverter}}"/>
-                    <TextBlock Grid.Row="2" Grid.Column="4"
-                            Text="{Binding PrecioError}"
-                            Style="{StaticResource ErrorText}" FontSize="10"
-                            TextWrapping="Wrap"
-                            Visibility="{Binding PrecioError, Converter={StaticResource StringToVisibilityConverter}}"/>
+                    <!-- Buscar -->
+                    <Button Grid.Row="1" Grid.Column="6"
+                            Width="40" Height="38"
+                            Style="{StaticResource BtnOutline}"
+                            Command="{Binding BuscarClienteCommand}"
+                            ToolTip="Buscar cliente por NIT (F3)">
+                        <TextBlock Text="⌕" FontSize="16"
+                                Foreground="{StaticResource Accent}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"/>
+                    </Button>
                 </Grid>
             </Border>
 
-            <!-- DataGrid ítems -->
-            <Border Grid.Row="1" Style="{StaticResource CardBorder}" Padding="0">
-                <DataGrid Style="{StaticResource PosDataGrid}"
-                          ColumnHeaderStyle="{StaticResource DataGridColumnHeader}"
-                          RowStyle="{StaticResource DataGridRow}"
-                          CellStyle="{StaticResource DataGridCell}"
-                          ItemsSource="{Binding Items}"
-                          SelectedItem="{Binding SelectedItem}"
-                          AutoGenerateColumns="False"
-                          CanUserAddRows="False"
-                          CanUserDeleteRows="False"
-                          IsReadOnly="True">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Descripción"
-                                            Binding="{Binding Descripcion}"
-                                            Width="*"/>
-                        <DataGridTextColumn Header="Cantidad"
-                                            Binding="{Binding Cantidad, StringFormat=N2}"
-                                            Width="80"/>
-                        <DataGridTextColumn Header="P. Unit."
-                                            Binding="{Binding PrecioUnitario, StringFormat=N2}"
-                                            Width="100"/>
-                        <DataGridTextColumn Header="Descuento"
-                                            Binding="{Binding Descuento, StringFormat=N2}"
-                                            Width="90"/>
-                        <DataGridTextColumn Header="Subtotal"
-                                            Binding="{Binding SubTotal, StringFormat=N2}"
-                                            Width="110"/>
-                        <DataGridTemplateColumn Header="Acción" Width="70">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="✕"
-                                            Style="{StaticResource BtnDanger}"
-                                            Width="30" Height="26"
-                                            Command="{Binding DataContext.EliminarItemCommand,
-                                                RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                            ToolTip="Eliminar este ítem"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </Border>
-        </Grid>
+            <!-- ── Área Central: Ítem + Grid ── -->
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-        <!-- ── Panel de Totales ── -->
-        <Border Grid.Row="3" Style="{StaticResource CardBorder}" Margin="0,12,0,0">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="260"/>
-                </Grid.ColumnDefinitions>
+                <!-- Formulario ítem -->
+                <Border Grid.Row="0" Style="{StaticResource CardBorderAccent}" Margin="0,0,0,8" Padding="16,10,16,10">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="38"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="110"/>
+                        </Grid.ColumnDefinitions>
 
-                <!-- Status message -->
-                <Border Grid.Column="0" CornerRadius="6" Padding="12,8"
-                        Margin="0,0,16,0" VerticalAlignment="Center">
-                    <Border.Style>
-                        <Style TargetType="Border">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsStatusError}" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource DangerMuted}"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsStatusError}" Value="False">
-                                    <Setter Property="Background" Value="{StaticResource AccentMuted}"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
-                    <TextBlock Text="{Binding StatusMessage}"
-                               FontFamily="Segoe UI" FontSize="12"
-                               VerticalAlignment="Center">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsStatusError}" Value="True">
-                                        <Setter Property="Foreground" Value="{StaticResource Danger}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsStatusError}" Value="False">
-                                        <Setter Property="Foreground" Value="{StaticResource Accent}"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
+                        <!-- Labels fila 0 -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Descripción del Servicio" Style="{StaticResource FieldLabel}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Cantidad" Style="{StaticResource FieldLabel}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="4" Text="Precio Unitario (Bs.)" Style="{StaticResource FieldLabel}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="6" Text="Descuento (Bs.)" Style="{StaticResource FieldLabel}"/>
+
+                        <!-- Inputs fila 1 -->
+                        <TextBox Grid.Row="1" Grid.Column="0"
+                                Text="{Binding Descripcion, UpdateSourceTrigger=PropertyChanged}"
+                                ToolTip="{Binding DescripcionError}">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox" BasedOn="{StaticResource PosTextBox}">
+                                    <Setter Property="BorderBrush" Value="{StaticResource Danger}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DescripcionError}" Value="">
+                                            <Setter Property="BorderBrush" Value="{StaticResource InputBorder}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <TextBox Grid.Row="1" Grid.Column="2"
+                                Text="{Binding Cantidad, UpdateSourceTrigger=PropertyChanged}"
+                                ToolTip="{Binding CantidadError}">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox" BasedOn="{StaticResource PosTextBoxNumber}">
+                                    <Setter Property="BorderBrush" Value="{StaticResource Danger}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding CantidadError}" Value="">
+                                            <Setter Property="BorderBrush" Value="{StaticResource InputBorder}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <TextBox Grid.Row="1" Grid.Column="4"
+                                Text="{Binding PrecioUnitario, UpdateSourceTrigger=PropertyChanged}"
+                                ToolTip="{Binding PrecioError}">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox" BasedOn="{StaticResource PosTextBoxNumber}">
+                                    <Setter Property="BorderBrush" Value="{StaticResource Danger}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding PrecioError}" Value="">
+                                            <Setter Property="BorderBrush" Value="{StaticResource InputBorder}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <TextBox Grid.Row="1" Grid.Column="6"
+                                Text="{Binding Descuento, UpdateSourceTrigger=PropertyChanged}"
+                                Style="{StaticResource PosTextBoxNumber}"
+                                ToolTip="Descuento en bolivianos (opcional)"/>
+
+                        <Button Grid.Row="1" Grid.Column="8"
+                                Content="F9  Agregar"
+                                Style="{StaticResource BtnPrimary}"
+                                Height="38" Padding="12,0"
+                                Command="{Binding AgregarItemCommand}"
+                                ToolTip="Agregar ítem a la factura (F9)"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0"
+                                Text="{Binding DescripcionError}"
+                                Style="{StaticResource ErrorText}" FontSize="10"
+                                TextWrapping="Wrap"
+                                Visibility="{Binding DescripcionError, Converter={StaticResource StringToVisibilityConverter}}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2"
+                                Text="{Binding CantidadError}"
+                                Style="{StaticResource ErrorText}" FontSize="10"
+                                TextWrapping="Wrap"
+                                Visibility="{Binding CantidadError, Converter={StaticResource StringToVisibilityConverter}}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="4"
+                                Text="{Binding PrecioError}"
+                                Style="{StaticResource ErrorText}" FontSize="10"
+                                TextWrapping="Wrap"
+                                Visibility="{Binding PrecioError, Converter={StaticResource StringToVisibilityConverter}}"/>
+                    </Grid>
                 </Border>
 
-                <!-- Totales -->
-                <Grid Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="1"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                <!-- DataGrid ítems -->
+                <Border Grid.Row="1" Style="{StaticResource CardBorder}" Padding="0">
+                    <DataGrid Style="{StaticResource PosDataGrid}"
+                            ColumnHeaderStyle="{StaticResource DataGridColumnHeader}"
+                            RowStyle="{StaticResource DataGridRow}"
+                            CellStyle="{StaticResource DataGridCell}"
+                            ItemsSource="{Binding Items}"
+                            SelectedItem="{Binding SelectedItem}"
+                            AutoGenerateColumns="False"
+                            CanUserAddRows="False"
+                            CanUserDeleteRows="False"
+                            IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Descripción"
+                                                Binding="{Binding Descripcion}"
+                                                Width="*"/>
+                            <DataGridTextColumn Header="Cantidad"
+                                                Binding="{Binding Cantidad, StringFormat=N2}"
+                                                Width="80"/>
+                            <DataGridTextColumn Header="P. Unit."
+                                                Binding="{Binding PrecioUnitario, StringFormat=N2}"
+                                                Width="100"/>
+                            <DataGridTextColumn Header="Descuento"
+                                                Binding="{Binding Descuento, StringFormat=N2}"
+                                                Width="90"/>
+                            <DataGridTextColumn Header="Subtotal"
+                                                Binding="{Binding SubTotal, StringFormat=N2}"
+                                                Width="110"/>
+                            <DataGridTemplateColumn Header="Acción" Width="70">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="✕"
+                                                Style="{StaticResource BtnDanger}"
+                                                Width="30" Height="26"
+                                                Command="{Binding DataContext.EliminarItemCommand,
+                                                    RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                ToolTip="Eliminar este ítem"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
+            </Grid>
+
+            <!-- ── Panel de Totales ── -->
+            <Border Grid.Row="3" Style="{StaticResource CardBorder}" Margin="0,12,0,0">
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="260"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0"
-                               Text="Subtotal" Style="{StaticResource FieldLabel}"
-                               VerticalAlignment="Center"/>
-                    <TextBlock Grid.Row="0" Grid.Column="1"
-                               Text="{Binding SubTotal, StringFormat='Bs. {0:N2}'}"
-                               Style="{StaticResource SubtotalAmount}"/>
+                    <!-- Status message -->
+                    <Border Grid.Column="0" CornerRadius="6" Padding="12,8"
+                            Margin="0,0,16,0" VerticalAlignment="Center">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsStatusError}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource DangerMuted}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsStatusError}" Value="False">
+                                        <Setter Property="Background" Value="{StaticResource AccentMuted}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="{Binding StatusMessage}"
+                                FontFamily="Segoe UI" FontSize="12"
+                                VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsStatusError}" Value="True">
+                                            <Setter Property="Foreground" Value="{StaticResource Danger}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsStatusError}" Value="False">
+                                            <Setter Property="Foreground" Value="{StaticResource Accent}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Border>
 
-                    <TextBlock Grid.Row="1" Grid.Column="0"
-                               Text="Descuento" Style="{StaticResource FieldLabel}"
-                               VerticalAlignment="Center" Margin="0,4,0,4"/>
-                    <TextBlock Grid.Row="1" Grid.Column="1"
-                               Text="{Binding TotalDescuento, StringFormat='Bs. {0:N2}'}"
-                               Style="{StaticResource SubtotalAmount}"
-                               Foreground="{StaticResource Warning}"/>
+                    <!-- Totales -->
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="1"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120"/>
+                        </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="2" Grid.Column="0"
-                               Text="IVA (13%)" Style="{StaticResource FieldLabel}"
-                               VerticalAlignment="Center"/>
-                    <TextBlock Grid.Row="2" Grid.Column="1"
-                               Text="{Binding MontoIva, StringFormat='Bs. {0:N2}'}"
-                               Style="{StaticResource SubtotalAmount}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                Text="Subtotal" Style="{StaticResource FieldLabel}"
+                                VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                Text="{Binding SubTotal, StringFormat='Bs. {0:N2}'}"
+                                Style="{StaticResource SubtotalAmount}"/>
 
-                    <Rectangle Grid.Row="3" Grid.ColumnSpan="2"
-                               Fill="{StaticResource BorderColor}" Margin="0,6"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0"
+                                Text="Descuento" Style="{StaticResource FieldLabel}"
+                                VerticalAlignment="Center" Margin="0,4,0,4"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1"
+                                Text="{Binding TotalDescuento, StringFormat='Bs. {0:N2}'}"
+                                Style="{StaticResource SubtotalAmount}"
+                                Foreground="{StaticResource Warning}"/>
 
-                    <TextBlock Grid.Row="4" Grid.Column="0"
-                               Text="TOTAL" FontFamily="Segoe UI Semibold"
-                               FontSize="14" Foreground="{StaticResource TextPrimary}"
-                               VerticalAlignment="Center"/>
-                    <TextBlock Grid.Row="4" Grid.Column="1"
-                               Text="{Binding MontoTotal, StringFormat='Bs. {0:N2}'}"
-                               Style="{StaticResource TotalAmount}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0"
+                                Text="IVA (13%)" Style="{StaticResource FieldLabel}"
+                                VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1"
+                                Text="{Binding MontoIva, StringFormat='Bs. {0:N2}'}"
+                                Style="{StaticResource SubtotalAmount}"/>
+
+                        <Rectangle Grid.Row="3" Grid.ColumnSpan="2"
+                                Fill="{StaticResource BorderColor}" Margin="0,6"/>
+
+                        <TextBlock Grid.Row="4" Grid.Column="0"
+                                Text="TOTAL" FontFamily="Segoe UI Semibold"
+                                FontSize="14" Foreground="{StaticResource TextPrimary}"
+                                VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1"
+                                Text="{Binding MontoTotal, StringFormat='Bs. {0:N2}'}"
+                                Style="{StaticResource TotalAmount}"/>
+                    </Grid>
                 </Grid>
-            </Grid>
-        </Border>
+            </Border>
 
-        <!-- ── Botón Emitir ── -->
-        <Button Grid.Row="4"
-                Content="F5  EMITIR FACTURA"
-                Style="{StaticResource BtnPrimary}"
-                Height="46" FontSize="14" Margin="0,10,0,0"
-                Command="{Binding EmitirFacturaCommand}"
-                ToolTip="Emitir y enviar factura al SIN (F5)"/>
-    </Grid>
+            <!-- ── Botón Emitir ── -->
+            <Button Grid.Row="4"
+                    Content="F5  EMITIR FACTURA"
+                    Style="{StaticResource BtnPrimary}"
+                    Height="46" FontSize="14" Margin="0,10,0,0"
+                    Command="{Binding EmitirFacturaCommand}"
+                    ToolTip="Emitir y enviar factura al SIN (F5)"/>
+        </Grid>
+    </ScrollViewer>
 </UserControl>
