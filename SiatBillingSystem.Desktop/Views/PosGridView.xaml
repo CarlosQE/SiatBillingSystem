@@ -237,6 +237,8 @@
                             ColumnHeaderStyle="{StaticResource DataGridColumnHeader}"
                             RowStyle="{StaticResource DataGridRow}"
                             CellStyle="{StaticResource DataGridCell}"
+                            RowHeaderWidth="0"
+                            CanUserResizeRows="False"
                             ItemsSource="{Binding Items}"
                             SelectedItem="{Binding SelectedItem}"
                             AutoGenerateColumns="False"
