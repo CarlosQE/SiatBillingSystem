@@ -40,6 +40,9 @@
             <Border Grid.Row="2" Style="{StaticResource CardBorder}" Padding="0">
                 <DataGrid x:Name="GridClientes"
                           Style="{StaticResource PosDataGrid}"
+                          CanUserResizeRows="False"
+                          RowHeaderWidth="0"
+                          SelectionUnit="FullRow"
                           ColumnHeaderStyle="{StaticResource DataGridColumnHeader}"
                           RowStyle="{StaticResource DataGridRow}"
                           CellStyle="{StaticResource DataGridCell}"
