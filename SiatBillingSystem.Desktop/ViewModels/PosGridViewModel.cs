@@ -49,6 +49,15 @@ namespace SiatBillingSystem.Desktop.ViewModels
             set => SetProperty(ref _metodoPagoSeleccionado, value);
         }
 
+        //Funciones de validacion y aceptacion de (,) y (.) para decimales.
+        private static readonly System.Globalization.NumberStyles _numStyle =
+            System.Globalization.NumberStyles.Number;
+        private static readonly System.Globalization.CultureInfo _invCulture =
+            System.Globalization.CultureInfo.InvariantCulture;
+
+        private static decimal ParseDecimal(string input) =>
+            decimal.TryParse(input?.Replace(',', '.'), _numStyle, _invCulture, out var v) ? v : 0m;
+            
         // ── Grilla ───────────────────────────────────────────────
         public ObservableCollection<InvoiceDetailRow> Items { get; } = new();
 
@@ -72,21 +81,19 @@ namespace SiatBillingSystem.Desktop.ViewModels
         {
             if (!ValidarItem()) return;
 
-            var cant = decimal.Parse(Cantidad);
-            var precio = decimal.Parse(PrecioUnitario);
-            var desc = decimal.TryParse(Descuento, out var d) ? d : 0m;
-            if (desc < 0) desc = 0m;
+            var cant  = ParseDecimal(Cantidad);
+            var precio = ParseDecimal(PrecioUnitario);
+            var desc  = ParseDecimal(Descuento);
 
-            var subtotalLinea = cant * precio - desc;
-            if (subtotalLinea < 0) subtotalLinea = 0m;
+            var subtotalLinea = Math.Max(cant * precio - desc, 0m);
 
             Items.Add(new InvoiceDetailRow
             {
-                Descripcion = Descripcion.Trim(),
-                Cantidad = cant,
+                Descripcion    = Descripcion.Trim(),
+                Cantidad       = cant,
                 PrecioUnitario = precio,
-                Descuento = desc,
-                SubTotal = subtotalLinea
+                Descuento      = desc,
+                SubTotal       = subtotalLinea
             });
 
             LimpiarFormItem();
@@ -172,21 +179,23 @@ private void BuscarCliente()
 
         private bool ValidarItem()
         {
+            
             var ok = true;
-            DescripcionError = string.Empty;
-            CantidadError = string.Empty;
-            PrecioError = string.Empty;
+            DescripcionError = CantidadError = PrecioError = string.Empty;
 
             if (string.IsNullOrWhiteSpace(Descripcion))
             { DescripcionError = "La descripción es obligatoria."; ok = false; }
 
-            if (!decimal.TryParse(Cantidad, out var cant) || cant <= 0)
+            var cant = ParseDecimal(Cantidad);
+            if (cant <= 0)
             { CantidadError = "Cantidad debe ser mayor a 0."; ok = false; }
 
-            if (!decimal.TryParse(PrecioUnitario, out var precio) || precio <= 0)
+            var precio = ParseDecimal(PrecioUnitario);
+            if (precio <= 0)
             { PrecioError = "Precio debe ser mayor a 0."; ok = false; }
 
-            if (decimal.TryParse(Descuento, out var desc) && desc < 0)
+            var desc = ParseDecimal(Descuento);
+            if (desc < 0)
             { PrecioError = "El descuento no puede ser negativo."; ok = false; }
 
             return ok;
@@ -196,10 +205,10 @@ private void BuscarCliente()
 
         private void RecalcularTotales()
         {
-            SubTotal = Items.Sum(i => i.Cantidad * i.PrecioUnitario);
+            SubTotal       = Items.Sum(i => i.Cantidad * i.PrecioUnitario); 
             TotalDescuento = Items.Sum(i => i.Descuento);
-            MontoTotal = Items.Sum(i => i.SubTotal);
-            MontoIva = Math.Round(MontoTotal / 1.13m * 0.13m, 2);
+            MontoTotal     = SubTotal - TotalDescuento;                     
+            MontoIva       = Math.Round(MontoTotal * 0.13m, 2);
         }
 
         private void LimpiarFormItem()

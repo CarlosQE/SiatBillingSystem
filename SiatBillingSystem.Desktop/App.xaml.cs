@@ -6,6 +6,7 @@ using SiatBillingSystem.Desktop.Views;
 using SiatBillingSystem.Infrastructure.Persistence;
 using System.Windows;
 using WpfApplication = System.Windows.Application;
+using System.IO;
 
 namespace SiatBillingSystem.Desktop
 {
@@ -20,7 +21,10 @@ namespace SiatBillingSystem.Desktop
                 {
                     // DbContext factory — permite crear instancias bajo demanda desde ViewModels
                     services.AddDbContextFactory<SiatDbContext>(options =>
-                        options.UseSqlite("Data Source=siat.db"));
+                    {
+                        var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "siat.db");
+                        options.UseSqlite($"Data Source={dbPath}");
+                    });
 
                     // ViewModels y ventana principal
                     services.AddSingleton<MainWindowViewModel>();

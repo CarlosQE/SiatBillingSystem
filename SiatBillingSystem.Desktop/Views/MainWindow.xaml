@@ -26,29 +26,115 @@
                 BorderBrush="{StaticResource BorderSubtle}" BorderThickness="0,0,1,0">
             <DockPanel>
 
+                <!-- Logo -->
                 <Border DockPanel.Dock="Top" Background="{StaticResource SidebarHeader}" Padding="0,16,0,16">
-                    <TextBlock Text="NEXUS" HorizontalAlignment="Center"
-                               FontFamily="Segoe UI Black" FontSize="18"
-                               Foreground="{StaticResource Accent}"/>
+                    <TextBlock HorizontalAlignment="Center"
+                            FontFamily="Segoe UI Black" FontSize="18"
+                            Foreground="{StaticResource Accent}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text" Value="NEXUS"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsMenuExpanded}" Value="False">
+                                        <Setter Property="Text" Value="N"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                 </Border>
 
-                <StackPanel DockPanel.Dock="Top" Margin="0,8,0,0">
-                    <Button Style="{StaticResource NavButton}" Command="{Binding NavigateToPosCommand}">
-                        <TextBlock Text="Grilla POS [F1]" Foreground="White"/>
-                    </Button>
-                    <Button Style="{StaticResource NavButton}" Command="{Binding NavigateToClientesCommand}">
-                        <TextBlock Text="Clientes [F2]" Foreground="White"/>
-                    </Button>
-                    <Button Style="{StaticResource NavButton}" Command="{Binding NavigateToConfiguracionCommand}">
-                        <TextBlock Text="Configuracion [F10]" Foreground="White"/>
-                    </Button>
-                </StackPanel>
-
+                <!-- Botón contraer/expandir -->
                 <Button DockPanel.Dock="Bottom" Style="{StaticResource NavButton}"
                         Command="{Binding ToggleMenuCommand}" Margin="0,0,0,8">
-                    <TextBlock Text="Contraer" Foreground="White"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <TextBlock FontSize="14" VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="«"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMenuExpanded}" Value="False">
+                                            <Setter Property="Text" Value="»"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="White"
+                                Visibility="{Binding IsMenuExpanded, Converter={StaticResource BoolToVisibility}}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="Contraer"/>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
                 </Button>
 
+                <!-- Navegación -->
+                <StackPanel DockPanel.Dock="Top" Margin="0,8,0,0">
+
+                            <Button Command="{Binding NavigateToPosCommand}">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ActiveSection}" Value="POS">
+                            <Setter Property="Background" Value="{StaticResource AccentMuted}"/>
+                            <Setter Property="BorderBrush" Value="{StaticResource Accent}"/>
+                            <Setter Property="BorderThickness" Value="2,0,0,0"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <TextBlock Text="🧾" FontSize="15" VerticalAlignment="Center"/>
+                <TextBlock Text="Grilla POS [F1]" Margin="10,0,0,0"
+                        VerticalAlignment="Center" Foreground="White"
+                        Visibility="{Binding IsMenuExpanded, Converter={StaticResource BoolToVisibility}}"/>
+            </StackPanel>
+        </Button>
+
+        <Button Command="{Binding NavigateToClientesCommand}">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ActiveSection}" Value="Clientes">
+                            <Setter Property="Background" Value="{StaticResource AccentMuted}"/>
+                            <Setter Property="BorderBrush" Value="{StaticResource Accent}"/>
+                            <Setter Property="BorderThickness" Value="2,0,0,0"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <TextBlock Text="👥" FontSize="15" VerticalAlignment="Center"/>
+                <TextBlock Text="Clientes [F2]" Margin="10,0,0,0"
+                        VerticalAlignment="Center" Foreground="White"
+                        Visibility="{Binding IsMenuExpanded, Converter={StaticResource BoolToVisibility}}"/>
+                </StackPanel>
+            </Button>
+
+<Button Command="{Binding NavigateToConfiguracionCommand}">
+    <Button.Style>
+        <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ActiveSection}" Value="Configuracion">
+                    <Setter Property="Background" Value="{StaticResource AccentMuted}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource Accent}"/>
+                    <Setter Property="BorderThickness" Value="2,0,0,0"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Button.Style>
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+        <TextBlock Text="⚙️" FontSize="15" VerticalAlignment="Center"/>
+        <TextBlock Text="Configuracion [F10]" Margin="10,0,0,0"
+                   VerticalAlignment="Center" Foreground="White"
+                   Visibility="{Binding IsMenuExpanded, Converter={StaticResource BoolToVisibility}}"/>
+    </StackPanel>
+</Button>
+
+                </StackPanel>
             </DockPanel>
         </Border>
 
@@ -64,12 +150,8 @@
                            Foreground="White" FontSize="16" VerticalAlignment="Center"/>
             </Border>
 
-            <!-- DEBUG: mostrar tipo del ViewModel actual -->
-            <TextBlock Grid.Row="1" Foreground="Yellow" FontSize="12" Margin="10"
-                       Text="{Binding CurrentViewModel}"/>
-
             <!-- Vista activa -->
-            <ContentControl Grid.Row="2" Content="{Binding CurrentViewModel}">
+            <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}">
                 <ContentControl.Resources>
                     <DataTemplate DataType="{x:Type vm:PosGridViewModel}">
                         <views:PosGridView/>

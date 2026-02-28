@@ -184,6 +184,7 @@
                                  ToolTip="Cantidad de unidades o horas"/>
                         <TextBlock Grid.Row="1" Text="{Binding CantidadError}"
                                    Style="{StaticResource ErrorText}"
+                                   TextWrapping="Wrap"
                                    Visibility="{Binding CantidadError,
                                        Converter={StaticResource StringToVisibilityConverter}}"/>
                     </Grid>
@@ -199,6 +200,7 @@
                                  ToolTip="Precio unitario en bolivianos"/>
                         <TextBlock Grid.Row="1" Text="{Binding PrecioError}"
                                    Style="{StaticResource ErrorText}"
+                                   TextWrapping="Wrap"
                                    Visibility="{Binding PrecioError,
                                        Converter={StaticResource StringToVisibilityConverter}}"/>
                     </Grid>
