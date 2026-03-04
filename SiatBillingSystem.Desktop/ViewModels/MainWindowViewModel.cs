@@ -1,61 +1,55 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
+using SiatBillingSystem.Application.Interfaces;
 using SiatBillingSystem.Infrastructure.Persistence;
 
 namespace SiatBillingSystem.Desktop.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
-        
-        private PosGridViewModel?       _posVm;
-        private ClientesViewModel?      _clientesVm;
-        private ConfiguracionViewModel? _configuracionVm;
+        private readonly PosGridViewModel        _posVm;
+        private readonly ClientesViewModel       _clientesVm;
+        private readonly ConfiguracionViewModel  _configuracionVm;
 
         [ObservableProperty] private ObservableObject? _currentViewModel;
         [ObservableProperty] private string _currentPageTitle = "Grilla POS";
-        [ObservableProperty] private string _empresaNombre    = "Mi Empresa";
-        [ObservableProperty] private string _nitEmpresa       = string.Empty;
         [ObservableProperty] private bool   _isMenuExpanded   = true;
+        [ObservableProperty] private string _activeSection    = "POS";
 
-        public MainWindowViewModel() { }
-
-        public void SetDbFactory(IDbContextFactory<SiatDbContext> factory)
+        public MainWindowViewModel(
+            IDbContextFactory<SiatDbContext> dbFactory,
+            IInvoiceService                  invoiceService,
+            IConfiguracionRepository         configuracionRepository)
         {
-            _posVm           = new PosGridViewModel();
-            _clientesVm      = new ClientesViewModel(factory);
-            _configuracionVm = new ConfiguracionViewModel(factory);
+            _posVm           = new PosGridViewModel(invoiceService, configuracionRepository);
+            _clientesVm      = new ClientesViewModel(dbFactory);
+            _configuracionVm = new ConfiguracionViewModel(dbFactory);
         }
 
         public void Initialize() => NavigateToPos();
 
-        [RelayCommand]
-        private void NavigateToPos()
+        [RelayCommand] private void NavigateToPos()
         {
-            CurrentViewModel = _posVm ??= new PosGridViewModel();
+            CurrentViewModel = _posVm;
             CurrentPageTitle = "Grilla de Facturación POS";
-            ActiveSection = "POS";
+            ActiveSection    = "POS";
         }
 
-        [RelayCommand]
-        private void NavigateToClientes()
+        [RelayCommand] private void NavigateToClientes()
         {
             CurrentViewModel = _clientesVm;
             CurrentPageTitle = "Clientes Frecuentes";
-            ActiveSection = "Clientes";
+            ActiveSection    = "Clientes";
         }
 
-        [RelayCommand]
-        private void NavigateToConfiguracion()
+        [RelayCommand] private void NavigateToConfiguracion()
         {
             CurrentViewModel = _configuracionVm;
             CurrentPageTitle = "Configuración de Empresa";
-            ActiveSection = "Configuracion";
+            ActiveSection    = "Configuracion";
         }
 
-        [RelayCommand]
-        private void ToggleMenu() => IsMenuExpanded = !IsMenuExpanded;
-
-        [ObservableProperty] private string _activeSection = "POS";
+        [RelayCommand] private void ToggleMenu() => IsMenuExpanded = !IsMenuExpanded;
     }
 }

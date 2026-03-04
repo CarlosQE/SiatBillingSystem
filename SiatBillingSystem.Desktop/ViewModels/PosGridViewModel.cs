@@ -2,36 +2,44 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Windows;
+using SiatBillingSystem.Application.Interfaces;
+using SiatBillingSystem.Domain.Entities;
+using SiatBillingSystem.Domain.Constants;
+using SiatBillingSystem.Infrastructure.Security;
 
 namespace SiatBillingSystem.Desktop.ViewModels
 {
     public partial class PosGridViewModel : ObservableObject
     {
+        // ── Dependencias ─────────────────────────────────────────
+        private readonly IInvoiceService          _invoiceService;
+        private readonly IConfiguracionRepository _configuracionRepo;
+
         // ── Cliente ──────────────────────────────────────────────
-        [ObservableProperty] private string _nitCliente = string.Empty;
-        [ObservableProperty] private string _nombreCliente = string.Empty;
-        [ObservableProperty] private string _metodoPago = "1";
-        [ObservableProperty] private string _nitError = string.Empty;
-        [ObservableProperty] private string _nombreError = string.Empty;
+        [ObservableProperty] private string _nitCliente      = string.Empty;
+        [ObservableProperty] private string _nombreCliente   = string.Empty;
+        [ObservableProperty] private string _metodoPago      = "1";
+        [ObservableProperty] private string _nitError        = string.Empty;
+        [ObservableProperty] private string _nombreError     = string.Empty;
 
         // ── Item en edición ──────────────────────────────────────
-        [ObservableProperty] private string _descripcion = string.Empty;
-        [ObservableProperty] private string _cantidad = "1";
-        [ObservableProperty] private string _precioUnitario = string.Empty;
-        [ObservableProperty] private string _descuento = "0";
+        [ObservableProperty] private string _descripcion      = string.Empty;
+        [ObservableProperty] private string _cantidad         = "1";
+        [ObservableProperty] private string _precioUnitario   = string.Empty;
+        [ObservableProperty] private string _descuento        = "0";
         [ObservableProperty] private string _descripcionError = string.Empty;
-        [ObservableProperty] private string _cantidadError = string.Empty;
-        [ObservableProperty] private string _precioError = string.Empty;
+        [ObservableProperty] private string _cantidadError    = string.Empty;
+        [ObservableProperty] private string _precioError      = string.Empty;
 
         // ── Totales ──────────────────────────────────────────────
-        [ObservableProperty] private decimal _subTotal = 0m;
+        [ObservableProperty] private decimal _subTotal       = 0m;
         [ObservableProperty] private decimal _totalDescuento = 0m;
-        [ObservableProperty] private decimal _montoTotal = 0m;
-        [ObservableProperty] private decimal _montoIva = 0m;
+        [ObservableProperty] private decimal _montoTotal     = 0m;
+        [ObservableProperty] private decimal _montoIva       = 0m;
 
         // ── Estado UI ────────────────────────────────────────────
         [ObservableProperty] private string _statusMessage = string.Empty;
-        [ObservableProperty] private bool _isStatusError = false;
+        [ObservableProperty] private bool   _isStatusError = false;
 
         // ── Catálogos ────────────────────────────────────────────
         public ObservableCollection<MetodoPagoItem> MetodosPago { get; } = new()
@@ -49,7 +57,6 @@ namespace SiatBillingSystem.Desktop.ViewModels
             set => SetProperty(ref _metodoPagoSeleccionado, value);
         }
 
-        //Funciones de validacion y aceptacion de (,) y (.) para decimales.
         private static readonly System.Globalization.NumberStyles _numStyle =
             System.Globalization.NumberStyles.Number;
         private static readonly System.Globalization.CultureInfo _invCulture =
@@ -57,7 +64,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
 
         private static decimal ParseDecimal(string input) =>
             decimal.TryParse(input?.Replace(',', '.'), _numStyle, _invCulture, out var v) ? v : 0m;
-            
+
         // ── Grilla ───────────────────────────────────────────────
         public ObservableCollection<InvoiceDetailRow> Items { get; } = new();
 
@@ -68,8 +75,14 @@ namespace SiatBillingSystem.Desktop.ViewModels
             set => SetProperty(ref _selectedItem, value);
         }
 
-        public PosGridViewModel()
+        // ── Constructor ──────────────────────────────────────────
+        public PosGridViewModel(
+            IInvoiceService          invoiceService,
+            IConfiguracionRepository configuracionRepo)
         {
+            _invoiceService    = invoiceService;
+            _configuracionRepo = configuracionRepo;
+
             MetodoPagoSeleccionado = MetodosPago[0];
             Items.CollectionChanged += (_, _) => RecalcularTotales();
         }
@@ -81,11 +94,9 @@ namespace SiatBillingSystem.Desktop.ViewModels
         {
             if (!ValidarItem()) return;
 
-            var cant  = ParseDecimal(Cantidad);
+            var cant   = ParseDecimal(Cantidad);
             var precio = ParseDecimal(PrecioUnitario);
-            var desc  = ParseDecimal(Descuento);
-
-            var subtotalLinea = Math.Max(cant * precio - desc, 0m);
+            var desc   = ParseDecimal(Descuento);
 
             Items.Add(new InvoiceDetailRow
             {
@@ -93,7 +104,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
                 Cantidad       = cant,
                 PrecioUnitario = precio,
                 Descuento      = desc,
-                SubTotal       = subtotalLinea
+                SubTotal       = Math.Max(cant * precio - desc, 0m)
             });
 
             LimpiarFormItem();
@@ -132,7 +143,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
         }
 
         [RelayCommand]
-        private void EmitirFactura()
+        private async Task EmitirFactura()
         {
             if (!ValidarCabecera()) return;
             if (Items.Count == 0)
@@ -141,29 +152,93 @@ namespace SiatBillingSystem.Desktop.ViewModels
                 return;
             }
 
-            // TODO Sprint 3: invocar servicio de emisión
-            SetStatus($"✓ Factura emitida — Total: Bs. {MontoTotal:N2}", false);
+            try
+            {
+                var config = await _configuracionRepo.ObtenerAsync();
+                if (config is null)
+                {
+                    SetStatus("Configura los datos de la empresa antes de emitir.", true);
+                    return;
+                }
+
+                if (config.CufdVencido)
+                {
+                    SetStatus("El CUFD está vencido. Renuévalo en Configuración.", true);
+                    return;
+                }
+
+                var numeroFactura = await _configuracionRepo.ObtenerSiguienteNumeroFacturaAsync();
+
+                var factura = new ServiceInvoice
+                {
+                    NitEmisor                    = config.Nit,
+                    NumeroFactura                = numeroFactura,
+                    Cufd                         = config.Cufd,
+                    CodigoSucursal               = config.CodigoSucursal,
+                    CodigoPuntoVenta             = config.CodigoPuntoVenta,
+                    CodigoModalidad              = config.CodigoModalidad,
+                    TipoEmision                  = SiatConstants.TipoEmisionOnline,
+                    TipoFactura                  = SiatConstants.TipoFacturaConDerechoCreditoFiscal,
+                    TipoDocumentoSector          = SiatConstants.SectorCompraVenta,
+                    FechaEmision                 = DateTime.Now,
+                    NombreRazonSocial            = NombreCliente.Trim(),
+                    NumeroDocumento              = NitCliente.Trim(),
+                    CodigoTipoDocumentoIdentidad = SiatConstants.TipoDocumentoNIT,
+                    CodigoMetodoPago             = int.Parse(MetodoPagoSeleccionado!.Codigo),
+                    MontoTotal                   = MontoTotal,
+                    MontoTotalSujetoIva          = MontoTotal,
+                    Leyenda                      = config.LeyendaLey453,
+                    Details = Items.Select(i => new ServiceInvoiceDetail
+                    {
+                        ActividadEconomica = config.ActividadEconomica,
+                        CodigoProductoSin  = 1,
+                        CodigoProducto     = "SRV-GEN",
+                        Descripcion        = i.Descripcion,
+                        Cantidad           = i.Cantidad,
+                        UnidadMedida       = 58,
+                        PrecioUnitario     = i.PrecioUnitario,
+                        SubTotal           = i.SubTotal
+                    }).ToList()
+                };
+
+                var resultado = await _invoiceService.PrepararFacturaAsync(
+                    factura,
+                    config.RutaCertificado,
+                    DpapiProtector.Descifrar(config.PasswordCertificadoCifrado));
+
+                if (!resultado.Exitoso)
+                {
+                    SetStatus($"Error: {resultado.Error}", true);
+                    return;
+                }
+
+                SetStatus($"✓ CUF: {resultado.Cuf}  —  Total: Bs. {MontoTotal:N2}", false);
+                LimpiarTodo();
+            }
+            catch (Exception ex)
+            {
+                SetStatus($"Error al emitir: {ex.Message}", true);
+            }
         }
 
-       [RelayCommand]
-private void BuscarCliente()
-{
-    NitError = string.Empty;
-    if (string.IsNullOrWhiteSpace(NitCliente))
-    {
-        NitError = "Ingresa el NIT para buscar.";
-        return;
-    }
-    // Sprint 3: conectar con IClienteRepository.ObtenerPorDocumentoAsync()
-    SetStatus($"Buscar NIT {NitCliente} disponible en Sprint 3.", false);
-}
+        [RelayCommand]
+        private void BuscarCliente()
+        {
+            NitError = string.Empty;
+            if (string.IsNullOrWhiteSpace(NitCliente))
+            {
+                NitError = "Ingresa el NIT para buscar.";
+                return;
+            }
+            SetStatus($"Buscar NIT {NitCliente} disponible en Sprint 3.", false);
+        }
 
         // ── Validaciones ─────────────────────────────────────────
 
         private bool ValidarCabecera()
         {
             var ok = true;
-            NitError = string.Empty;
+            NitError    = string.Empty;
             NombreError = string.Empty;
 
             if (string.IsNullOrWhiteSpace(NitCliente))
@@ -179,23 +254,19 @@ private void BuscarCliente()
 
         private bool ValidarItem()
         {
-            
             var ok = true;
             DescripcionError = CantidadError = PrecioError = string.Empty;
 
             if (string.IsNullOrWhiteSpace(Descripcion))
             { DescripcionError = "La descripción es obligatoria."; ok = false; }
 
-            var cant = ParseDecimal(Cantidad);
-            if (cant <= 0)
+            if (ParseDecimal(Cantidad) <= 0)
             { CantidadError = "Cantidad debe ser mayor a 0."; ok = false; }
 
-            var precio = ParseDecimal(PrecioUnitario);
-            if (precio <= 0)
+            if (ParseDecimal(PrecioUnitario) <= 0)
             { PrecioError = "Precio debe ser mayor a 0."; ok = false; }
 
-            var desc = ParseDecimal(Descuento);
-            if (desc < 0)
+            if (ParseDecimal(Descuento) < 0)
             { PrecioError = "El descuento no puede ser negativo."; ok = false; }
 
             return ok;
@@ -205,30 +276,30 @@ private void BuscarCliente()
 
         private void RecalcularTotales()
         {
-            SubTotal       = Items.Sum(i => i.Cantidad * i.PrecioUnitario); 
+            SubTotal       = Items.Sum(i => i.Cantidad * i.PrecioUnitario);
             TotalDescuento = Items.Sum(i => i.Descuento);
-            MontoTotal     = SubTotal - TotalDescuento;                     
+            MontoTotal     = SubTotal - TotalDescuento;
             MontoIva       = Math.Round(MontoTotal * 0.13m, 2);
         }
 
         private void LimpiarFormItem()
         {
-            Descripcion = string.Empty;
-            Cantidad = "1";
-            PrecioUnitario = string.Empty;
-            Descuento = "0";
+            Descripcion      = string.Empty;
+            Cantidad         = "1";
+            PrecioUnitario   = string.Empty;
+            Descuento        = "0";
             DescripcionError = string.Empty;
-            CantidadError = string.Empty;
-            PrecioError = string.Empty;
+            CantidadError    = string.Empty;
+            PrecioError      = string.Empty;
         }
 
         private void LimpiarTodo()
         {
-            NitCliente = string.Empty;
-            NombreCliente = string.Empty;
+            NitCliente             = string.Empty;
+            NombreCliente          = string.Empty;
             MetodoPagoSeleccionado = MetodosPago[0];
-            NitError = string.Empty;
-            NombreError = string.Empty;
+            NitError               = string.Empty;
+            NombreError            = string.Empty;
             Items.Clear();
             LimpiarFormItem();
             SubTotal = TotalDescuento = MontoTotal = MontoIva = 0m;
@@ -244,28 +315,23 @@ private void BuscarCliente()
     // ── Modelos locales ──────────────────────────────────────────
     public class MetodoPagoItem
     {
-        public string Codigo { get; set; } = string.Empty;
+        public string Codigo      { get; set; } = string.Empty;
         public string Descripcion { get; set; } = string.Empty;
         public override string ToString() => Descripcion;
     }
 
     public class InvoiceDetailRow : ObservableObject
     {
-        private string _descripcion = string.Empty;
+        private string  _descripcion    = string.Empty;
         private decimal _cantidad;
         private decimal _precioUnitario;
         private decimal _descuento;
         private decimal _subTotal;
 
-        public string Descripcion
-        { get => _descripcion; set => SetProperty(ref _descripcion, value); }
-        public decimal Cantidad
-        { get => _cantidad; set => SetProperty(ref _cantidad, value); }
-        public decimal PrecioUnitario
-        { get => _precioUnitario; set => SetProperty(ref _precioUnitario, value); }
-        public decimal Descuento
-        { get => _descuento; set => SetProperty(ref _descuento, value); }
-        public decimal SubTotal
-        { get => _subTotal; set => SetProperty(ref _subTotal, value); }
+        public string  Descripcion    { get => _descripcion;    set => SetProperty(ref _descripcion, value); }
+        public decimal Cantidad       { get => _cantidad;       set => SetProperty(ref _cantidad, value); }
+        public decimal PrecioUnitario { get => _precioUnitario; set => SetProperty(ref _precioUnitario, value); }
+        public decimal Descuento      { get => _descuento;      set => SetProperty(ref _descuento, value); }
+        public decimal SubTotal       { get => _subTotal;       set => SetProperty(ref _subTotal, value); }
     }
 }
