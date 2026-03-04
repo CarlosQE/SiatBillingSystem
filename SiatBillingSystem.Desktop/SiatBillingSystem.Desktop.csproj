@@ -24,9 +24,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SiatBillingSystem.Domain\SiatBillingSystem.Domain.csproj" />
     <ProjectReference Include="..\SiatBillingSystem.Application\SiatBillingSystem.Application.csproj" />
     <ProjectReference Include="..\SiatBillingSystem.Infrastructure\SiatBillingSystem.Infrastructure.csproj" />
+    <ProjectReference Include="..\SiatBillingSystem.Domain\SiatBillingSystem.Domain.csproj" />
   </ItemGroup>
 
 </Project>

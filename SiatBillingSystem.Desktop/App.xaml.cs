@@ -1,12 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SiatBillingSystem.Application.Interfaces;
+using SiatBillingSystem.Application.Services;
 using SiatBillingSystem.Desktop.ViewModels;
 using SiatBillingSystem.Desktop.Views;
 using SiatBillingSystem.Infrastructure.Persistence;
+using SiatBillingSystem.Infrastructure.Repositories;
+using SiatBillingSystem.Infrastructure.Services;
+using System.IO;
 using System.Windows;
 using WpfApplication = System.Windows.Application;
-using System.IO;
 
 namespace SiatBillingSystem.Desktop
 {
@@ -17,37 +21,16 @@ namespace SiatBillingSystem.Desktop
         public App()
         {
             _host = Host.CreateDefaultBuilder()
-                .ConfigureServices((context, services) =>
-                {
-                    // DbContext factory — permite crear instancias bajo demanda desde ViewModels
-                    services.AddDbContextFactory<SiatDbContext>(options =>
-                    {
-                        var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "siat.db");
-                        options.UseSqlite($"Data Source={dbPath}");
-                    });
-
-                    // ViewModels y ventana principal
-                    services.AddSingleton<MainWindowViewModel>();
-                    services.AddSingleton<MainWindow>();
-                })
+                .ConfigureServices(RegisterServices)
                 .Build();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
         {
             await _host.StartAsync();
+            await MigrateDatabase();
 
-            // Migraciones automáticas
-            var factory = _host.Services.GetRequiredService<IDbContextFactory<SiatDbContext>>();
-            using var db = await factory.CreateDbContextAsync();
-            await db.Database.MigrateAsync();
-
-            // Pasar factory al MainWindowViewModel antes de mostrar
-            var vm = _host.Services.GetRequiredService<MainWindowViewModel>();
-            vm.SetDbFactory(factory);
-
-            var mainWindow = _host.Services.GetRequiredService<MainWindow>();
-            mainWindow.Show();
+            _host.Services.GetRequiredService<MainWindow>().Show();
             base.OnStartup(e);
         }
 
@@ -56,6 +39,31 @@ namespace SiatBillingSystem.Desktop
             await _host.StopAsync();
             _host.Dispose();
             base.OnExit(e);
+        }
+
+        private static void RegisterServices(HostBuilderContext _, IServiceCollection services)
+        {
+            services.AddDbContextFactory<SiatDbContext>(options =>
+            {
+                var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "siat.db");
+                options.UseSqlite($"Data Source={dbPath}");
+            });
+
+            services.AddTransient<ISignatureService,        SignatureService>();
+            services.AddTransient<IInvoiceRepository,       InvoiceRepository>();
+            services.AddTransient<IClienteRepository,       ClienteRepository>();
+            services.AddTransient<IConfiguracionRepository, ConfiguracionRepository>();
+            services.AddTransient<IInvoiceService,          InvoiceService>();
+
+            services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<MainWindow>();
+        }
+
+        private async Task MigrateDatabase()
+        {
+            var factory = _host.Services.GetRequiredService<IDbContextFactory<SiatDbContext>>();
+            await using var db = await factory.CreateDbContextAsync();
+            await db.Database.MigrateAsync();
         }
     }
 }
