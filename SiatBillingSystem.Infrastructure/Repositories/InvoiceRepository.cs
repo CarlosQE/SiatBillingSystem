@@ -6,67 +6,38 @@ using SiatBillingSystem.Infrastructure.Persistence;
 
 namespace SiatBillingSystem.Infrastructure.Repositories;
 
-/// <summary>
-/// Implementación de IInvoiceRepository usando EF Core + SQLite.
-/// Usa IDbContextFactory para ser thread-safe en WPF (sin Scoped lifetime).
-/// </summary>
 public class InvoiceRepository : IInvoiceRepository
 {
-    private readonly IDbContextFactory<SiatDbContext> _contextFactory;
+    private readonly SiatDbContext _context;
 
-    public InvoiceRepository(IDbContextFactory<SiatDbContext> contextFactory)
+    public InvoiceRepository(SiatDbContext context)
     {
-        _contextFactory = contextFactory;
+        _context = context;
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // ESCRITURA
-    // ─────────────────────────────────────────────────────────────────────────
 
     public async Task<int> GuardarAsync(ServiceInvoice factura)
     {
-        await using var ctx = await _contextFactory.CreateDbContextAsync();
-        ctx.Facturas.Add(factura);
-        await ctx.SaveChangesAsync();
+        _context.Facturas.Add(factura);
+        await _context.SaveChangesAsync();
         return factura.Id;
     }
 
-    public async Task ActualizarEstadoAsync(
-        int id,
-        EstadoEnvioSin nuevoEstado,
-        string? codigoAutorizacion = null,
-        string? motivoRechazo = null)
+    public async Task ActualizarEstadoAsync(int id, EstadoEnvioSin nuevoEstado,
+        string? codigoAutorizacion = null, string? motivoRechazo = null)
     {
-        await using var ctx = await _contextFactory.CreateDbContextAsync();
-        var factura = await ctx.Facturas.FindAsync(id);
-        if (factura is null) return;
+        var factura = await _context.Facturas.FindAsync(id)
+            ?? throw new InvalidOperationException($"Factura con Id {id} no encontrada.");
 
-        factura.EstadoEnvio          = nuevoEstado;
-        factura.CodigoAutorizacion   = codigoAutorizacion ?? factura.CodigoAutorizacion;
-        factura.MotivoRechazo        = motivoRechazo      ?? factura.MotivoRechazo;
-        factura.FechaRespuestaSin    = DateTime.Now;
+        factura.EstadoEnvio = nuevoEstado;
+        factura.FechaRespuestaSin = DateTime.Now;
 
-        await ctx.SaveChangesAsync();
-    }
+        if (codigoAutorizacion is not null)
+            factura.CodigoAutorizacion = codigoAutorizacion;
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // LECTURA
-    // ─────────────────────────────────────────────────────────────────────────
+        if (motivoRechazo is not null)
+            factura.MotivoRechazo = motivoRechazo;
 
-    public async Task<ServiceInvoice?> ObtenerPorIdAsync(int id)
-    {
-        await using var ctx = await _contextFactory.CreateDbContextAsync();
-        return await ctx.Facturas
-            .Include(f => f.Details)
-            .FirstOrDefaultAsync(f => f.Id == id);
-    }
-
-    public async Task<ServiceInvoice?> ObtenerPorCufAsync(string cuf)
-    {
-        await using var ctx = await _contextFactory.CreateDbContextAsync();
-        return await ctx.Facturas
-            .Include(f => f.Details)
-            .FirstOrDefaultAsync(f => f.Cuf == cuf);
+        await _context.SaveChangesAsync();
     }
 
     public async Task<List<ServiceInvoice>> ObtenerHistorialAsync(
@@ -75,9 +46,10 @@ public class InvoiceRepository : IInvoiceRepository
         EstadoEnvioSin? estado = null,
         string? numeroDocumentoCliente = null)
     {
-        await using var ctx = await _contextFactory.CreateDbContextAsync();
-
-        var query = ctx.Facturas.Include(f => f.Details).AsQueryable();
+        var query = _context.Facturas
+            .Include(f => f.Details)
+            .Include(f => f.ClienteFrecuente)
+            .AsQueryable();
 
         if (desde.HasValue)
             query = query.Where(f => f.FechaEmision >= desde.Value);
@@ -89,26 +61,44 @@ public class InvoiceRepository : IInvoiceRepository
             query = query.Where(f => f.EstadoEnvio == estado.Value);
 
         if (!string.IsNullOrWhiteSpace(numeroDocumentoCliente))
-            query = query.Where(f => f.NumeroDocumento.Contains(numeroDocumentoCliente));
+            query = query.Where(f => f.NumeroDocumento == numeroDocumentoCliente);
 
-        return await query.OrderByDescending(f => f.FechaEmision).ToListAsync();
+        return await query
+            .OrderByDescending(f => f.FechaEmision)
+            .ToListAsync();
     }
 
     public async Task<List<ServiceInvoice>> ObtenerPendientesEnvioAsync()
     {
-        await using var ctx = await _contextFactory.CreateDbContextAsync();
-        return await ctx.Facturas
+        return await _context.Facturas
             .Include(f => f.Details)
-            .Where(f => f.EstadoEnvio == EstadoEnvioSin.PendienteEnvio)
-            .OrderBy(f => f.FechaEmision)
+            .Where(f => f.EstadoEnvio == EstadoEnvioSin.PendienteEnvio ||
+                        f.EstadoEnvio == EstadoEnvioSin.Contingencia)
+            .OrderBy(f => f.FechaEmision) // Procesar en orden cronológico (FIFO)
             .ToListAsync();
+    }
+
+    public async Task<ServiceInvoice?> ObtenerPorIdAsync(int id)
+    {
+        return await _context.Facturas
+            .Include(f => f.Details)
+            .Include(f => f.ClienteFrecuente)
+            .FirstOrDefaultAsync(f => f.Id == id);
+    }
+
+    public async Task<ServiceInvoice?> ObtenerPorCufAsync(string cuf)
+    {
+        return await _context.Facturas
+            .Include(f => f.Details)
+            .FirstOrDefaultAsync(f => f.Cuf == cuf);
     }
 
     public async Task<long> ObtenerUltimoNumeroFacturaAsync()
     {
-        await using var ctx = await _contextFactory.CreateDbContextAsync();
-        if (!await ctx.Facturas.AnyAsync())
+        // Si no hay facturas aún, retorna 0
+        if (!await _context.Facturas.AnyAsync())
             return 0;
-        return await ctx.Facturas.MaxAsync(f => f.NumeroFactura);
+
+        return await _context.Facturas.MaxAsync(f => f.NumeroFactura);
     }
 }

@@ -484,8 +484,3 @@ $RECYCLE.BIN/
 # SQLite local database
 siat.db
 SiatBillingSystem.Desktop/siat.db
-
-# Base de datos local
-*.db
-*.db-shm
-*.db-wal

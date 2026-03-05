@@ -1,32 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net10.0-windows</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <!-- Firma Digital XML (SIAT) -->
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.3" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.3" />
-
-    <!-- Entity Framework Core + SQLite (Persistencia Offline-First) -->
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-
-    <!-- QuestPDF: Generación de PDF profesional (Community License - gratuita) -->
-    <PackageReference Include="QuestPDF" Version="2026.2.2" />
-
-    <!-- QRCoder: Generación de códigos QR (MIT License, sin dependencia de GDI+) -->
-    <PackageReference Include="QRCoder" Version="1.7.0" />
-  </ItemGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\SiatBillingSystem.Application\SiatBillingSystem.Application.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.3" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.3" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.3" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
 </Project>
