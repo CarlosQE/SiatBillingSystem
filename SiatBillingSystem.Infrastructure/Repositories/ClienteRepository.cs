@@ -7,11 +7,11 @@ namespace SiatBillingSystem.Infrastructure.Repositories;
 
 public class ClienteRepository : IClienteRepository
 {
-    private readonly SiatDbContext _context;
+    private readonly IDbContextFactory<SiatDbContext> _contextFactory;
 
-    public ClienteRepository(SiatDbContext context)
+    public ClienteRepository(IDbContextFactory<SiatDbContext> contextFactory)
     {
-        _context = context;
+        _contextFactory = contextFactory;
     }
 
     public async Task<List<ClienteFrecuente>> BuscarAsync(string termino)
@@ -19,47 +19,49 @@ public class ClienteRepository : IClienteRepository
         if (string.IsNullOrWhiteSpace(termino))
             return new List<ClienteFrecuente>();
 
+        await using var ctx = await _contextFactory.CreateDbContextAsync();
         var terminoLimpio = termino.Trim().ToLower();
-
-        return await _context.ClientesFrecuentes
+        return await ctx.ClientesFrecuentes
             .Where(c =>
                 c.NumeroDocumento.ToLower().Contains(terminoLimpio) ||
                 c.NombreRazonSocial.ToLower().Contains(terminoLimpio))
-            .OrderByDescending(c => c.UltimaFactura) // Más recientes primero — relevancia en POS
-            .Take(10) // Máximo 10 sugerencias para no saturar el autocompletado
+            .OrderByDescending(c => c.UltimaFactura)
+            .Take(10)
             .ToListAsync();
     }
 
     public async Task<ClienteFrecuente?> ObtenerPorDocumentoAsync(string numeroDocumento)
     {
-        return await _context.ClientesFrecuentes
+        await using var ctx = await _contextFactory.CreateDbContextAsync();
+        return await ctx.ClientesFrecuentes
             .FirstOrDefaultAsync(c => c.NumeroDocumento == numeroDocumento.Trim());
     }
 
     public async Task<int> GuardarAsync(ClienteFrecuente cliente)
     {
+        await using var ctx = await _contextFactory.CreateDbContextAsync();
         if (cliente.Id == 0)
-            _context.ClientesFrecuentes.Add(cliente);
+            ctx.ClientesFrecuentes.Add(cliente);
         else
-            _context.ClientesFrecuentes.Update(cliente);
-
-        await _context.SaveChangesAsync();
+            ctx.ClientesFrecuentes.Update(cliente);
+        await ctx.SaveChangesAsync();
         return cliente.Id;
     }
 
     public async Task RegistrarFacturaEmitidaAsync(int clienteId)
     {
-        var cliente = await _context.ClientesFrecuentes.FindAsync(clienteId);
+        await using var ctx = await _contextFactory.CreateDbContextAsync();
+        var cliente = await ctx.ClientesFrecuentes.FindAsync(clienteId);
         if (cliente is null) return;
-
         cliente.UltimaFactura = DateTime.Now;
         cliente.TotalFacturas++;
-        await _context.SaveChangesAsync();
+        await ctx.SaveChangesAsync();
     }
 
     public async Task<List<ClienteFrecuente>> ObtenerTodosAsync()
     {
-        return await _context.ClientesFrecuentes
+        await using var ctx = await _contextFactory.CreateDbContextAsync();
+        return await ctx.ClientesFrecuentes
             .OrderByDescending(c => c.UltimaFactura)
             .ThenBy(c => c.NombreRazonSocial)
             .ToListAsync();
