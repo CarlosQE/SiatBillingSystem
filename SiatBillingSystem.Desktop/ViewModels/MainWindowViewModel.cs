@@ -1,55 +1,61 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.EntityFrameworkCore;
-using SiatBillingSystem.Infrastructure.Persistence;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SiatBillingSystem.Desktop.ViewModels
 {
+    /// <summary>
+    /// ViewModel de la ventana principal.
+    /// Gestiona navegación entre vistas mediante ContentControl + DataTemplate.
+    /// Cada NavigateTo... pide al contenedor DI una instancia nueva del ViewModel
+    /// (Transient), garantizando estado limpio al volver a una vista.
+    /// </summary>
     public partial class MainWindowViewModel : ObservableObject
     {
-        private PosGridViewModel? _posVm;
-        private ClientesViewModel? _clientesVm;
-        private ConfiguracionViewModel? _configuracionVm;
+        private readonly IServiceProvider _serviceProvider;
 
         [ObservableProperty] private ObservableObject? _currentViewModel;
         [ObservableProperty] private string _currentPageTitle = "Grilla POS";
-        [ObservableProperty] private string _empresaNombre = "Mi Empresa";
-        [ObservableProperty] private string _nitEmpresa = "";
-        [ObservableProperty] private bool _isMenuExpanded = true;
+        [ObservableProperty] private bool   _isMenuExpanded   = true;
 
-        public MainWindowViewModel() { }
-
-        public void SetDbFactory(IDbContextFactory<SiatDbContext> factory)
+        public MainWindowViewModel(IServiceProvider serviceProvider)
         {
-            _posVm = new PosGridViewModel();
-            _clientesVm = new ClientesViewModel(factory);
-            _configuracionVm = new ConfiguracionViewModel(factory);
-        }
+            _serviceProvider = serviceProvider;
 
-        public void Initialize()
-        {
+            // Vista inicial al arrancar
             NavigateToPos();
         }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // NAVEGACIÓN
+        // ─────────────────────────────────────────────────────────────────────
 
         [RelayCommand]
         private void NavigateToPos()
         {
-            CurrentViewModel = _posVm ??= new PosGridViewModel();
-            CurrentPageTitle = "Grilla de Facturacion POS";
+            CurrentViewModel = _serviceProvider.GetRequiredService<PosGridViewModel>();
+            CurrentPageTitle = "Facturación POS  [F1]";
         }
 
         [RelayCommand]
         private void NavigateToClientes()
         {
-            CurrentViewModel = _clientesVm;
-            CurrentPageTitle = "Clientes Frecuentes";
+            CurrentViewModel = _serviceProvider.GetRequiredService<ClientesViewModel>();
+            CurrentPageTitle = "Clientes Frecuentes  [F2]";
+        }
+
+        [RelayCommand]
+        private void NavigateToHistorial()
+        {
+            CurrentViewModel = _serviceProvider.GetRequiredService<HistorialViewModel>();
+            CurrentPageTitle = "Historial de Facturas  [F3]";
         }
 
         [RelayCommand]
         private void NavigateToConfiguracion()
         {
-            CurrentViewModel = _configuracionVm;
-            CurrentPageTitle = "Configuracion de Empresa";
+            CurrentViewModel = _serviceProvider.GetRequiredService<ConfiguracionViewModel>();
+            CurrentPageTitle = "Configuración de Empresa  [F10]";
         }
 
         [RelayCommand]

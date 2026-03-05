@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SiatBillingSystem.Application.Interfaces;
+using SiatBillingSystem.Application.Services;       // InvoiceService vive en Application
 using SiatBillingSystem.Desktop.ViewModels;
-using SiatBillingSystem.Desktop.Views;
 using SiatBillingSystem.Infrastructure.Persistence;
+using SiatBillingSystem.Infrastructure.Repositories;
+using SiatBillingSystem.Infrastructure.Services;    // SignatureService, QrCodeService, PdfService
 using System.Windows;
 using WpfApplication = System.Windows.Application;
 
@@ -18,11 +21,30 @@ namespace SiatBillingSystem.Desktop
             _host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                    // DbContext factory — permite crear instancias bajo demanda desde ViewModels
+                    // ── Base de datos ─────────────────────────────────────────────────
                     services.AddDbContextFactory<SiatDbContext>(options =>
                         options.UseSqlite("Data Source=siat.db"));
 
-                    // ViewModels y ventana principal
+                    // ── Repositorios (Infrastructure) ─────────────────────────────────
+                    services.AddSingleton<IInvoiceRepository,       InvoiceRepository>();
+                    services.AddSingleton<IClienteRepository,       ClienteRepository>();
+                    services.AddSingleton<IConfiguracionRepository, ConfiguracionRepository>();
+
+                    // ── Servicios de dominio ──────────────────────────────────────────
+                    services.AddSingleton<ISignatureService, SignatureService>();   // Infrastructure
+                    services.AddSingleton<IInvoiceService,   InvoiceService>();     // Application
+
+                    // ── Servicios de presentación (Infrastructure) ────────────────────
+                    services.AddSingleton<IQrCodeService, QrCodeService>();
+                    services.AddSingleton<IPdfService,    PdfService>();
+
+                    // ── ViewModels (Transient = instancia fresca al navegar) ───────────
+                    services.AddTransient<PosGridViewModel>();
+                    services.AddTransient<ClientesViewModel>();
+                    services.AddTransient<ConfiguracionViewModel>();
+                    services.AddTransient<HistorialViewModel>();
+
+                    // ── Ventana principal (Singleton) ─────────────────────────────────
                     services.AddSingleton<MainWindowViewModel>();
                     services.AddSingleton<MainWindow>();
                 })
@@ -33,17 +55,13 @@ namespace SiatBillingSystem.Desktop
         {
             await _host.StartAsync();
 
-            // Migraciones automáticas
             var factory = _host.Services.GetRequiredService<IDbContextFactory<SiatDbContext>>();
-            using var db = await factory.CreateDbContextAsync();
+            await using var db = await factory.CreateDbContextAsync();
             await db.Database.MigrateAsync();
-
-            // Pasar factory al MainWindowViewModel antes de mostrar
-            var vm = _host.Services.GetRequiredService<MainWindowViewModel>();
-            vm.SetDbFactory(factory);
 
             var mainWindow = _host.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();
+
             base.OnStartup(e);
         }
 
