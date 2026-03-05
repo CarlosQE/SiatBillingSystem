@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SiatBillingSystem.Desktop")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7a8b5c190921112e513fac565f357f5c498d5312")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c3203178a9f68ab9e589e993ab775ccb3d82fcec")]
 [assembly: System.Reflection.AssemblyProductAttribute("SiatBillingSystem.Desktop")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SiatBillingSystem.Desktop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

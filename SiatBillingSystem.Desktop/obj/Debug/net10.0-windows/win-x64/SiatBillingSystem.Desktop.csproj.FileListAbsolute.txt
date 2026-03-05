@@ -189,3 +189,6 @@ D:\Programacion\SiatBillingSystem\SiatBillingSystem.Desktop\bin\Debug\net10.0-wi
 D:\Programacion\SiatBillingSystem\SiatBillingSystem.Desktop\bin\Debug\net10.0-windows\win-x64\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 D:\Programacion\SiatBillingSystem\SiatBillingSystem.Desktop\bin\Debug\net10.0-windows\win-x64\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 D:\Programacion\SiatBillingSystem\SiatBillingSystem.Desktop\bin\Debug\net10.0-windows\win-x64\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
+D:\UPDS\SEMESTRE V\SiatBillingSystem\SiatBillingSystem\SiatBillingSystem.Desktop\obj\Debug\net10.0-windows\win-x64\SiatBillingSystem.Desktop.dll
+D:\UPDS\SEMESTRE V\SiatBillingSystem\SiatBillingSystem\SiatBillingSystem.Desktop\obj\Debug\net10.0-windows\win-x64\refint\SiatBillingSystem.Desktop.dll
+D:\UPDS\SEMESTRE V\SiatBillingSystem\SiatBillingSystem\SiatBillingSystem.Desktop\obj\Debug\net10.0-windows\win-x64\SiatBillingSystem.Desktop.pdb

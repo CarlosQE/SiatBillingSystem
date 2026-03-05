@@ -37,3 +37,12 @@ D:\Programacion\SiatBillingSystem\SiatBillingSystem.Infrastructure\obj\Debug\net
 D:\Programacion\SiatBillingSystem\SiatBillingSystem.Infrastructure\obj\Debug\net10.0-windows\SiatBillingSystem.Infrastructure.pdb
 D:\Programacion\SiatBillingSystem\SiatBillingSystem.Infrastructure\obj\Debug\net10.0-windows\SiatBillingSystem.Infrastructure.genruntimeconfig.cache
 D:\Programacion\SiatBillingSystem\SiatBillingSystem.Infrastructure\obj\Debug\net10.0-windows\ref\SiatBillingSystem.Infrastructure.dll
+D:\UPDS\SEMESTRE V\SiatBillingSystem\SiatBillingSystem\SiatBillingSystem.Infrastructure\obj\Debug\net10.0-windows\SiatBillingSystem.Infrastructure.csproj.AssemblyReference.cache
+D:\UPDS\SEMESTRE V\SiatBillingSystem\SiatBillingSystem\SiatBillingSystem.Infrastructure\obj\Debug\net10.0-windows\SiatBillingSystem.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+D:\UPDS\SEMESTRE V\SiatBillingSystem\SiatBillingSystem\SiatBillingSystem.Infrastructure\obj\Debug\net10.0-windows\SiatBillingSystem.Infrastructure.AssemblyInfoInputs.cache
+D:\UPDS\SEMESTRE V\SiatBillingSystem\SiatBillingSystem\SiatBillingSystem.Infrastructure\obj\Debug\net10.0-windows\SiatBillingSystem.Infrastructure.AssemblyInfo.cs
+D:\UPDS\SEMESTRE V\SiatBillingSystem\SiatBillingSystem\SiatBillingSystem.Infrastructure\obj\Debug\net10.0-windows\SiatBillingSystem.Infrastructure.csproj.CoreCompileInputs.cache
+D:\UPDS\SEMESTRE V\SiatBillingSystem\SiatBillingSystem\SiatBillingSystem.Infrastructure\obj\Debug\net10.0-windows\SiatBillingSystem.Infrastructure.sourcelink.json
+D:\UPDS\SEMESTRE V\SiatBillingSystem\SiatBillingSystem\SiatBillingSystem.Infrastructure\obj\Debug\net10.0-windows\SiatBillingSystem.Infrastructure.dll
+D:\UPDS\SEMESTRE V\SiatBillingSystem\SiatBillingSystem\SiatBillingSystem.Infrastructure\obj\Debug\net10.0-windows\refint\SiatBillingSystem.Infrastructure.dll
+D:\UPDS\SEMESTRE V\SiatBillingSystem\SiatBillingSystem\SiatBillingSystem.Infrastructure\obj\Debug\net10.0-windows\SiatBillingSystem.Infrastructure.pdb

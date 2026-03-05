@@ -1546,38 +1546,13 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
-      "SiatBillingSystem.Application/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v10.0",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore": "10.0.3",
-          "SiatBillingSystem.Domain": "1.0.0"
-        },
-        "compile": {
-          "bin/placeholder/SiatBillingSystem.Application.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/SiatBillingSystem.Application.dll": {}
-        }
-      },
-      "SiatBillingSystem.Domain/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v10.0",
-        "compile": {
-          "bin/placeholder/SiatBillingSystem.Domain.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/SiatBillingSystem.Domain.dll": {}
-        }
-      },
       "SiatBillingSystem.Infrastructure/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Sqlite": "9.0.2",
           "QRCoder": "1.7.0",
-          "QuestPDF": "2026.2.2",
-          "SiatBillingSystem.Application": "1.0.0"
+          "QuestPDF": "2026.2.2"
         },
         "compile": {
           "bin/placeholder/SiatBillingSystem.Infrastructure.dll": {}
@@ -2959,38 +2934,13 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
-      "SiatBillingSystem.Application/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v10.0",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore": "10.0.3",
-          "SiatBillingSystem.Domain": "1.0.0"
-        },
-        "compile": {
-          "bin/placeholder/SiatBillingSystem.Application.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/SiatBillingSystem.Application.dll": {}
-        }
-      },
-      "SiatBillingSystem.Domain/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v10.0",
-        "compile": {
-          "bin/placeholder/SiatBillingSystem.Domain.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/SiatBillingSystem.Domain.dll": {}
-        }
-      },
       "SiatBillingSystem.Infrastructure/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Sqlite": "9.0.2",
           "QRCoder": "1.7.0",
-          "QuestPDF": "2026.2.2",
-          "SiatBillingSystem.Application": "1.0.0"
+          "QuestPDF": "2026.2.2"
         },
         "compile": {
           "bin/placeholder/SiatBillingSystem.Infrastructure.dll": {}
@@ -5652,16 +5602,6 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "SiatBillingSystem.Application/1.0.0": {
-      "type": "project",
-      "path": "../SiatBillingSystem.Application/SiatBillingSystem.Application.csproj",
-      "msbuildProject": "../SiatBillingSystem.Application/SiatBillingSystem.Application.csproj"
-    },
-    "SiatBillingSystem.Domain/1.0.0": {
-      "type": "project",
-      "path": "../SiatBillingSystem.Domain/SiatBillingSystem.Domain.csproj",
-      "msbuildProject": "../SiatBillingSystem.Domain/SiatBillingSystem.Domain.csproj"
-    },
     "SiatBillingSystem.Infrastructure/1.0.0": {
       "type": "project",
       "path": "../SiatBillingSystem.Infrastructure/SiatBillingSystem.Infrastructure.csproj",
@@ -5676,8 +5616,6 @@
       "Microsoft.EntityFrameworkCore.Sqlite >= 10.0.3",
       "Microsoft.Extensions.DependencyInjection >= 10.0.3",
       "Microsoft.Extensions.Hosting >= 10.0.3",
-      "SiatBillingSystem.Application >= 1.0.0",
-      "SiatBillingSystem.Domain >= 1.0.0",
       "SiatBillingSystem.Infrastructure >= 1.0.0"
     ]
   },
@@ -5714,12 +5652,6 @@
         "net10.0-windows7.0": {
           "targetAlias": "net10.0-windows",
           "projectReferences": {
-            "D:\\UPDS\\SEMESTRE V\\SiatBillingSystem\\SiatBillingSystem\\SiatBillingSystem.Application\\SiatBillingSystem.Application.csproj": {
-              "projectPath": "D:\\UPDS\\SEMESTRE V\\SiatBillingSystem\\SiatBillingSystem\\SiatBillingSystem.Application\\SiatBillingSystem.Application.csproj"
-            },
-            "D:\\UPDS\\SEMESTRE V\\SiatBillingSystem\\SiatBillingSystem\\SiatBillingSystem.Domain\\SiatBillingSystem.Domain.csproj": {
-              "projectPath": "D:\\UPDS\\SEMESTRE V\\SiatBillingSystem\\SiatBillingSystem\\SiatBillingSystem.Domain\\SiatBillingSystem.Domain.csproj"
-            },
             "D:\\UPDS\\SEMESTRE V\\SiatBillingSystem\\SiatBillingSystem\\SiatBillingSystem.Infrastructure\\SiatBillingSystem.Infrastructure.csproj": {
               "projectPath": "D:\\UPDS\\SEMESTRE V\\SiatBillingSystem\\SiatBillingSystem\\SiatBillingSystem.Infrastructure\\SiatBillingSystem.Infrastructure.csproj"
             }
