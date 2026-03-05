@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\SiatBillingSystem.Application",
+    "\\SiatBillingSystem.Application\\Common",
+    "\\SiatBillingSystem.Application\\Interfaces",
+    "\\SiatBillingSystem.Application\\Services",
+    "\\SiatBillingSystem.Infrastructure\\Interfaces",
+    "\\SiatBillingSystem.Infrastructure\\Services"
+  ],
+  "SelectedNode": "\\SiatBillingSystem.Application\\Common\\SiatAlgorithms.cs",
+  "PreviewInSolutionExplorer": false
+}
