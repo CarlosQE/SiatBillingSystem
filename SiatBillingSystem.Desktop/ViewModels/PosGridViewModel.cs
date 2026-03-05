@@ -71,6 +71,15 @@ namespace SiatBillingSystem.Desktop.ViewModels
             set => SetProperty(ref _metodoPagoSeleccionado, value);
         }
 
+        // ── Helpers de parseo ─────────────────────────────────────────────────
+        private static readonly System.Globalization.NumberStyles _numStyle =
+            System.Globalization.NumberStyles.Number;
+        private static readonly System.Globalization.CultureInfo _invCulture =
+            System.Globalization.CultureInfo.InvariantCulture;
+
+        private static decimal ParseDecimal(string input) =>
+            decimal.TryParse(input?.Replace(',', '.'), _numStyle, _invCulture, out var v) ? v : 0m;
+
         // ── Grilla ────────────────────────────────────────────────────────────
         public ObservableCollection<InvoiceDetailRow> Items { get; } = new();
 
@@ -80,15 +89,6 @@ namespace SiatBillingSystem.Desktop.ViewModels
             get => _selectedItem;
             set => SetProperty(ref _selectedItem, value);
         }
-
-        // ── Helpers de parseo ─────────────────────────────────────────────────
-        private static readonly System.Globalization.NumberStyles _numStyle =
-            System.Globalization.NumberStyles.Number;
-        private static readonly System.Globalization.CultureInfo _invCulture =
-            System.Globalization.CultureInfo.InvariantCulture;
-
-        private static decimal ParseDecimal(string input) =>
-            decimal.TryParse(input?.Replace(',', '.'), _numStyle, _invCulture, out var v) ? v : 0m;
 
         // ── Constructor ───────────────────────────────────────────────────────
         public PosGridViewModel(
@@ -167,9 +167,9 @@ namespace SiatBillingSystem.Desktop.ViewModels
 
         /// <summary>
         /// F5 — Emitir Factura. Flujo completo offline-first:
-        /// 1. Validar → 2. Obtener config → 3. Construir entidad
-        /// 4. Calcular CUF → 5. Firmar XML (si hay cert) → 6. Guardar SQLite
-        /// 7. Generar QR → 8. Generar PDF → 9. Abrir PDF → 10. Limpiar grilla
+        /// 1. Validar → 2. Obtener config → 3. Verificar CUFD → 4. Construir entidad
+        /// 5. Calcular CUF → 6. Firmar XML (si hay cert) → 7. Guardar SQLite
+        /// 8. Generar QR → 9. Generar PDF → 10. Abrir PDF → 11. Limpiar grilla
         /// </summary>
         [RelayCommand]
         private async Task EmitirFactura()
@@ -194,10 +194,17 @@ namespace SiatBillingSystem.Desktop.ViewModels
                     return;
                 }
 
-                // Paso 2: Siguiente número de factura (atómico)
+                // Paso 2: Verificar CUFD vigente
+                if (config.CufdVencido)
+                {
+                    SetStatus("⚠  El CUFD está vencido. Renuévalo en Configuración (F10).", true);
+                    return;
+                }
+
+                // Paso 3: Siguiente número de factura (atómico)
                 var numeroFactura = await _configuracionRepo.ObtenerSiguienteNumeroFacturaAsync();
 
-                // Paso 3: Tipo de emisión (online si hay cert, contingencia si no)
+                // Paso 4: Tipo de emisión (online si hay cert, contingencia si no)
                 var tieneCertificado = !string.IsNullOrWhiteSpace(config.RutaCertificado)
                                     && File.Exists(config.RutaCertificado);
                 var tipoEmision = tieneCertificado
@@ -206,7 +213,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
 
                 var cufd = string.IsNullOrWhiteSpace(config.Cufd) ? "PENDIENTE-CUFD" : config.Cufd;
 
-                // Paso 4: Construir entidad — MontoTotal incluye IVA, MontoTotalSujetoIva es la base
+                // Paso 5: Construir entidad — MontoTotal incluye IVA, MontoTotalSujetoIva es la base
                 var factura = new ServiceInvoice
                 {
                     NitEmisor                    = config.Nit,
@@ -248,7 +255,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
                     }).ToList()
                 };
 
-                // Paso 5: CUF + XML + Firma (o solo CUF en contingencia)
+                // Paso 6: CUF + XML + Firma (o solo CUF en contingencia)
                 InvoiceResult resultado;
                 if (tieneCertificado)
                 {
@@ -275,16 +282,16 @@ namespace SiatBillingSystem.Desktop.ViewModels
 
                 factura.XmlFirmado = resultado.XmlFirmado;
 
-                // Paso 6: Persistir en SQLite
+                // Paso 7: Persistir en SQLite
                 await _invoiceRepository.GuardarAsync(factura);
 
-                // Paso 7: Actualizar frecuencia del cliente si ya está registrado
+                // Paso 8: Actualizar frecuencia del cliente si ya está registrado
                 var clienteExistente = await _clienteRepository
                     .ObtenerPorDocumentoAsync(NitCliente.Trim());
                 if (clienteExistente is not null)
                     await _clienteRepository.RegistrarFacturaEmitidaAsync(clienteExistente.Id);
 
-                // Paso 8: Generar QR
+                // Paso 9: Generar QR
                 byte[] qrBytes;
                 try
                 {
@@ -294,7 +301,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
                 }
                 catch { qrBytes = Array.Empty<byte>(); }
 
-                // Paso 9: Generar y abrir PDF
+                // Paso 10: Generar y abrir PDF
                 try
                 {
                     var rutaPdf = _pdfService.GuardarPdf(factura, config, qrBytes);
@@ -306,7 +313,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
                     return;
                 }
 
-                // Paso 10: Éxito
+                // Paso 11: Éxito
                 var modoStr = tieneCertificado ? "en línea" : "contingencia";
                 SetStatus(
                     $"✅  Factura N° {numeroFactura} emitida ({modoStr}).  " +
@@ -409,6 +416,9 @@ namespace SiatBillingSystem.Desktop.ViewModels
             if (ParseDecimal(PrecioUnitario) <= 0)
             { PrecioError = "Precio debe ser mayor a 0."; ok = false; }
 
+            if (ParseDecimal(Descuento) < 0)
+            { PrecioError = "El descuento no puede ser negativo."; ok = false; }
+
             return ok;
         }
 
@@ -434,10 +444,10 @@ namespace SiatBillingSystem.Desktop.ViewModels
 
         private void LimpiarFormItem()
         {
-            Descripcion = string.Empty;
-            Cantidad    = "1";
-            PrecioUnitario = string.Empty;
-            Descuento      = "0";
+            Descripcion      = string.Empty;
+            Cantidad         = "1";
+            PrecioUnitario   = string.Empty;
+            Descuento        = "0";
             DescripcionError = CantidadError = PrecioError = string.Empty;
         }
 

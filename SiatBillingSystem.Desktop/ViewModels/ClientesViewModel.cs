@@ -153,8 +153,16 @@ namespace SiatBillingSystem.Desktop.ViewModels
                     _todosLosClientes.Add(nuevo);
                     SetStatus($"Cliente '{nuevo.NombreRazonSocial}' guardado correctamente.", false);
                 }
+
                 else if (ClienteSeleccionado is not null)
                 {
+                    if (_todosLosClientes.Any(c => c.NumeroDocumento == EditNit.Trim() 
+                                                && c.Id != ClienteSeleccionado.Id))
+                    {
+                        EditNitError = "Ya existe un cliente con este NIT.";
+                        return;
+                    }
+
                     var existente = db.ClientesFrecuentes.Find(ClienteSeleccionado.Id);
                     if (existente is not null)
                     {

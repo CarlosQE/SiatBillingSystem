@@ -17,14 +17,14 @@ namespace SiatBillingSystem.Desktop.ViewModels
         [ObservableProperty] private ObservableObject? _currentViewModel;
         [ObservableProperty] private string _currentPageTitle = "Grilla POS";
         [ObservableProperty] private bool   _isMenuExpanded   = true;
+        [ObservableProperty] private string _activeSection    = "POS";
 
         public MainWindowViewModel(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-
-            // Vista inicial al arrancar
-            NavigateToPos();
         }
+
+        public void Initialize() => NavigateToPos();
 
         // ─────────────────────────────────────────────────────────────────────
         // NAVEGACIÓN
@@ -35,6 +35,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
         {
             CurrentViewModel = _serviceProvider.GetRequiredService<PosGridViewModel>();
             CurrentPageTitle = "Facturación POS  [F1]";
+            ActiveSection    = "POS";
         }
 
         [RelayCommand]
@@ -42,6 +43,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
         {
             CurrentViewModel = _serviceProvider.GetRequiredService<ClientesViewModel>();
             CurrentPageTitle = "Clientes Frecuentes  [F2]";
+            ActiveSection    = "Clientes";
         }
 
         [RelayCommand]
@@ -49,6 +51,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
         {
             CurrentViewModel = _serviceProvider.GetRequiredService<HistorialViewModel>();
             CurrentPageTitle = "Historial de Facturas  [F3]";
+            ActiveSection    = "Historial";
         }
 
         [RelayCommand]
@@ -56,9 +59,9 @@ namespace SiatBillingSystem.Desktop.ViewModels
         {
             CurrentViewModel = _serviceProvider.GetRequiredService<ConfiguracionViewModel>();
             CurrentPageTitle = "Configuración de Empresa  [F10]";
+            ActiveSection    = "Configuracion";
         }
 
-        [RelayCommand]
-        private void ToggleMenu() => IsMenuExpanded = !IsMenuExpanded;
+        [RelayCommand] private void ToggleMenu() => IsMenuExpanded = !IsMenuExpanded;
     }
 }

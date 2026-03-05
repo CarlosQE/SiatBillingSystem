@@ -28,10 +28,12 @@ public class ConfiguracionRepository : IConfiguracionRepository
     public async Task GuardarAsync(ConfiguracionEmpresa configuracion)
     {
         await using var ctx = await _contextFactory.CreateDbContextAsync();
+
         if (configuracion.Id == 0)
             ctx.ConfiguracionEmpresa.Add(configuracion);
         else
             ctx.ConfiguracionEmpresa.Update(configuracion);
+
         configuracion.FechaUltimaActualizacion = DateTime.Now;
         await ctx.SaveChangesAsync();
     }
@@ -39,13 +41,16 @@ public class ConfiguracionRepository : IConfiguracionRepository
     public async Task ActualizarCufdAsync(string nuevoCufd, DateTime vencimiento)
     {
         await using var ctx = await _contextFactory.CreateDbContextAsync();
+
         var config = await ctx.ConfiguracionEmpresa.FirstOrDefaultAsync()
             ?? throw new InvalidOperationException(
                 "No existe configuración de empresa. Configure el sistema antes de facturar.");
-        config.Cufd                    = nuevoCufd;
-        config.FechaCufd               = DateTime.Now;
-        config.VencimientoCufd         = vencimiento;
+
+        config.Cufd                     = nuevoCufd;
+        config.FechaCufd                = DateTime.Now;
+        config.VencimientoCufd          = vencimiento;
         config.FechaUltimaActualizacion = DateTime.Now;
+
         await ctx.SaveChangesAsync();
     }
 
@@ -54,13 +59,17 @@ public class ConfiguracionRepository : IConfiguracionRepository
         await _lockNumeroFactura.WaitAsync();
         try
         {
+            // Un solo contexto para toda la operación atómica
             await using var ctx = await _contextFactory.CreateDbContextAsync();
+
             var config = await ctx.ConfiguracionEmpresa.FirstOrDefaultAsync()
                 ?? throw new InvalidOperationException(
                     "No existe configuración de empresa. Configure el sistema antes de facturar.");
+
             config.UltimoNumeroFactura++;
             config.FechaUltimaActualizacion = DateTime.Now;
             await ctx.SaveChangesAsync();
+
             return config.UltimoNumeroFactura;
         }
         finally

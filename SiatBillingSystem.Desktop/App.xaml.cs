@@ -2,11 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SiatBillingSystem.Application.Interfaces;
-using SiatBillingSystem.Application.Services;       // InvoiceService vive en Application
+using SiatBillingSystem.Application.Services;
 using SiatBillingSystem.Desktop.ViewModels;
 using SiatBillingSystem.Infrastructure.Persistence;
 using SiatBillingSystem.Infrastructure.Repositories;
-using SiatBillingSystem.Infrastructure.Services;    // SignatureService, QrCodeService, PdfService
+using SiatBillingSystem.Infrastructure.Services;
+using System.IO;
 using System.Windows;
 using WpfApplication = System.Windows.Application;
 
@@ -19,49 +20,16 @@ namespace SiatBillingSystem.Desktop
         public App()
         {
             _host = Host.CreateDefaultBuilder()
-                .ConfigureServices((context, services) =>
-                {
-                    // ── Base de datos ─────────────────────────────────────────────────
-                    services.AddDbContextFactory<SiatDbContext>(options =>
-                        options.UseSqlite("Data Source=siat.db"));
-
-                    // ── Repositorios (Infrastructure) ─────────────────────────────────
-                    services.AddSingleton<IInvoiceRepository,       InvoiceRepository>();
-                    services.AddSingleton<IClienteRepository,       ClienteRepository>();
-                    services.AddSingleton<IConfiguracionRepository, ConfiguracionRepository>();
-
-                    // ── Servicios de dominio ──────────────────────────────────────────
-                    services.AddSingleton<ISignatureService, SignatureService>();   // Infrastructure
-                    services.AddSingleton<IInvoiceService,   InvoiceService>();     // Application
-
-                    // ── Servicios de presentación (Infrastructure) ────────────────────
-                    services.AddSingleton<IQrCodeService, QrCodeService>();
-                    services.AddSingleton<IPdfService,    PdfService>();
-
-                    // ── ViewModels (Transient = instancia fresca al navegar) ───────────
-                    services.AddTransient<PosGridViewModel>();
-                    services.AddTransient<ClientesViewModel>();
-                    services.AddTransient<ConfiguracionViewModel>();
-                    services.AddTransient<HistorialViewModel>();
-
-                    // ── Ventana principal (Singleton) ─────────────────────────────────
-                    services.AddSingleton<MainWindowViewModel>();
-                    services.AddSingleton<MainWindow>();
-                })
+                .ConfigureServices(RegisterServices)
                 .Build();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
         {
             await _host.StartAsync();
+            await MigrateDatabase();
 
-            var factory = _host.Services.GetRequiredService<IDbContextFactory<SiatDbContext>>();
-            await using var db = await factory.CreateDbContextAsync();
-            await db.Database.MigrateAsync();
-
-            var mainWindow = _host.Services.GetRequiredService<MainWindow>();
-            mainWindow.Show();
-
+            _host.Services.GetRequiredService<MainWindow>().Show();
             base.OnStartup(e);
         }
 
@@ -70,6 +38,36 @@ namespace SiatBillingSystem.Desktop
             await _host.StopAsync();
             _host.Dispose();
             base.OnExit(e);
+        }
+
+        private static void RegisterServices(HostBuilderContext _, IServiceCollection services)
+        {
+            services.AddDbContextFactory<SiatDbContext>(options =>
+            {
+                var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "siat.db");
+                options.UseSqlite($"Data Source={dbPath}");
+            });
+
+            services.AddTransient<ISignatureService,        SignatureService>();
+            services.AddTransient<IInvoiceRepository,       InvoiceRepository>();
+            services.AddTransient<IClienteRepository,       ClienteRepository>();
+            services.AddTransient<IConfiguracionRepository, ConfiguracionRepository>();
+            services.AddTransient<IInvoiceService,          InvoiceService>();
+
+            services.AddTransient<PosGridViewModel>();
+            services.AddTransient<ClientesViewModel>();
+            services.AddTransient<ConfiguracionViewModel>();
+            services.AddTransient<HistorialViewModel>();
+
+            services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<MainWindow>();
+        }
+
+        private async Task MigrateDatabase()
+        {
+            var factory = _host.Services.GetRequiredService<IDbContextFactory<SiatDbContext>>();
+            await using var db = await factory.CreateDbContextAsync();
+            await db.Database.MigrateAsync();
         }
     }
 }
