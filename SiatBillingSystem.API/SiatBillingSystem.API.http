@@ -1,0 +1,6 @@
+@SiatBillingSystem.API_HostAddress = http://localhost:5082
+
+GET {{SiatBillingSystem.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
