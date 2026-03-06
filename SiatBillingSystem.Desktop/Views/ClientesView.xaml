@@ -48,7 +48,8 @@
                           AutoGenerateColumns="False"
                           CanUserAddRows="False"
                           CanUserDeleteRows="False"
-                          IsReadOnly="True">
+                          IsReadOnly="True"
+                          RowHeaderWidth="0">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="NIT/CI" Binding="{Binding NumeroDocumento}" Width="120"/>
                         <DataGridTextColumn Header="Nombre / Razon Social" Binding="{Binding NombreRazonSocial}" Width="*"/>

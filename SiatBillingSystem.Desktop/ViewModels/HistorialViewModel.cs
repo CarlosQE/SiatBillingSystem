@@ -54,6 +54,8 @@ namespace SiatBillingSystem.Desktop.ViewModels
             _configuracionRepo = configuracionRepo;
             _pdfService        = pdfService;
             _qrService         = qrService;
+
+            _ = InicializarAsync();
         }
 
         // ─────────────────────────────────────────────────────────────────────

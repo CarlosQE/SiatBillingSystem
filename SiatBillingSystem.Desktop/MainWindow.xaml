@@ -18,28 +18,22 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="{Binding IsMenuExpanded,
-                              Converter={StaticResource MenuWidthConverter}}"/>
+            <ColumnDefinition Width="{Binding IsMenuExpanded, Converter={StaticResource MenuWidthConverter}}"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- ══ SIDEBAR ════════════════════════════════════════════════════════ -->
+        <!-- SIDEBAR -->
         <Border Grid.Column="0"
                 Background="{StaticResource Sidebar}"
                 BorderBrush="{StaticResource BorderSubtle}"
                 BorderThickness="0,0,1,0">
             <DockPanel>
 
-                <!-- ── Logo: "NEXUS" expandido / "N" colapsado ──────────────── -->
-                <Border DockPanel.Dock="Top"
-                        Background="{StaticResource SidebarHeader}"
-                        Padding="0,18,0,18">
+                <!-- Logo -->
+                <Border DockPanel.Dock="Top" Background="{StaticResource SidebarHeader}" Padding="0,18,0,18">
                     <Grid>
-                        <!-- Logo expandido -->
-                        <TextBlock Text="NEXUS"
-                                   HorizontalAlignment="Center"
-                                   FontFamily="Segoe UI Black"
-                                   FontSize="18"
+                        <TextBlock Text="NEXUS" HorizontalAlignment="Center"
+                                   FontFamily="Segoe UI Black" FontSize="18"
                                    Foreground="{StaticResource Accent}">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
@@ -52,11 +46,8 @@
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
-                        <!-- Logo colapsado: solo la "N" -->
-                        <TextBlock Text="N"
-                                   HorizontalAlignment="Center"
-                                   FontFamily="Segoe UI Black"
-                                   FontSize="22"
+                        <TextBlock Text="N" HorizontalAlignment="Center"
+                                   FontFamily="Segoe UI Black" FontSize="22"
                                    Foreground="{StaticResource Accent}">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
@@ -72,12 +63,9 @@
                     </Grid>
                 </Border>
 
-                <!-- ── Botón contraer / expandir (fondo del sidebar) ─────────── -->
-                <Button DockPanel.Dock="Bottom"
-                        Style="{StaticResource NavButton}"
-                        Command="{Binding ToggleMenuCommand}"
-                        Margin="0,0,0,8"
-                        ToolTip="Expandir / Contraer menú  (Ctrl+B)">
+                <!-- Botón contraer/expandir -->
+                <Button DockPanel.Dock="Bottom" Style="{StaticResource NavButton}"
+                        Command="{Binding ToggleMenuCommand}" Margin="0,0,0,8">
                     <TextBlock HorizontalAlignment="Center" FontSize="13">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
@@ -93,19 +81,25 @@
                     </TextBlock>
                 </Button>
 
-                <!-- ── Botones de navegación ──────────────────────────────────── -->
+                <!-- Botones de navegación -->
                 <StackPanel DockPanel.Dock="Top" Margin="0,8,0,0">
 
                     <!-- Facturación F1 -->
-                    <Button Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToPosCommand}"
-                            ToolTip="Facturación  [F1]">
+                    <Button Command="{Binding NavigateToPosCommand}" ToolTip="Facturación [F1]">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActiveSection}" Value="POS">
+                                        <Setter Property="Background" Value="{StaticResource AccentMuted}"/>
+                                        <Setter Property="BorderBrush" Value="{StaticResource Accent}"/>
+                                        <Setter Property="BorderThickness" Value="3,0,0,0"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="🧾" FontSize="15" Width="22"
-                                       TextAlignment="Center"
-                                       VerticalAlignment="Center"/>
-                            <TextBlock VerticalAlignment="Center"
-                                       Foreground="White" Margin="8,0,0,0">
+                            <TextBlock Text="🧾" FontSize="15" Width="22" TextAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock VerticalAlignment="Center" Foreground="White" Margin="8,0,0,0">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Text" Value="Facturación  [F1]"/>
@@ -122,15 +116,21 @@
                     </Button>
 
                     <!-- Clientes F2 -->
-                    <Button Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToClientesCommand}"
-                            ToolTip="Clientes  [F2]">
+                    <Button Command="{Binding NavigateToClientesCommand}" ToolTip="Clientes [F2]">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActiveSection}" Value="Clientes">
+                                        <Setter Property="Background" Value="{StaticResource AccentMuted}"/>
+                                        <Setter Property="BorderBrush" Value="{StaticResource Accent}"/>
+                                        <Setter Property="BorderThickness" Value="3,0,0,0"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="👤" FontSize="15" Width="22"
-                                       TextAlignment="Center"
-                                       VerticalAlignment="Center"/>
-                            <TextBlock VerticalAlignment="Center"
-                                       Foreground="White" Margin="8,0,0,0">
+                            <TextBlock Text="👤" FontSize="15" Width="22" TextAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock VerticalAlignment="Center" Foreground="White" Margin="8,0,0,0">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Text" Value="Clientes  [F2]"/>
@@ -147,15 +147,21 @@
                     </Button>
 
                     <!-- Historial F3 -->
-                    <Button Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToHistorialCommand}"
-                            ToolTip="Historial de Facturas  [F3]">
+                    <Button Command="{Binding NavigateToHistorialCommand}" ToolTip="Historial [F3]">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActiveSection}" Value="Historial">
+                                        <Setter Property="Background" Value="{StaticResource AccentMuted}"/>
+                                        <Setter Property="BorderBrush" Value="{StaticResource Accent}"/>
+                                        <Setter Property="BorderThickness" Value="3,0,0,0"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="📋" FontSize="15" Width="22"
-                                       TextAlignment="Center"
-                                       VerticalAlignment="Center"/>
-                            <TextBlock VerticalAlignment="Center"
-                                       Foreground="White" Margin="8,0,0,0">
+                            <TextBlock Text="📋" FontSize="15" Width="22" TextAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock VerticalAlignment="Center" Foreground="White" Margin="8,0,0,0">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Text" Value="Historial  [F3]"/>
@@ -172,15 +178,21 @@
                     </Button>
 
                     <!-- Configuración F10 -->
-                    <Button Style="{StaticResource NavButton}"
-                            Command="{Binding NavigateToConfiguracionCommand}"
-                            ToolTip="Configuración de Empresa  [F10]">
+                    <Button Command="{Binding NavigateToConfiguracionCommand}" ToolTip="Configuración [F10]">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActiveSection}" Value="Configuracion">
+                                        <Setter Property="Background" Value="{StaticResource AccentMuted}"/>
+                                        <Setter Property="BorderBrush" Value="{StaticResource Accent}"/>
+                                        <Setter Property="BorderThickness" Value="3,0,0,0"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="⚙" FontSize="15" Width="22"
-                                       TextAlignment="Center"
-                                       VerticalAlignment="Center"/>
-                            <TextBlock VerticalAlignment="Center"
-                                       Foreground="White" Margin="8,0,0,0">
+                            <TextBlock Text="⚙" FontSize="15" Width="22" TextAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock VerticalAlignment="Center" Foreground="White" Margin="8,0,0,0">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Text" Value="Configuración  [F10]"/>
@@ -200,40 +212,30 @@
             </DockPanel>
         </Border>
 
-        <!-- ══ CONTENIDO PRINCIPAL ════════════════════════════════════════════ -->
+        <!-- CONTENIDO PRINCIPAL -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="48"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Barra de título -->
-            <Border Grid.Row="0"
-                    Background="{StaticResource TopBar}"
-                    Padding="20,0">
+            <Border Grid.Row="0" Background="{StaticResource TopBar}" Padding="20,0">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0"
-                               Text="{Binding CurrentPageTitle}"
-                               Foreground="White"
-                               FontSize="15"
-                               VerticalAlignment="Center"/>
-                    <!-- Indicador de modo: útil para que el usuario sepa si hay cert configurado -->
-                    <Border Grid.Column="1"
-                            Background="#1a2a1a" CornerRadius="4"
+                    <TextBlock Grid.Column="0" Text="{Binding CurrentPageTitle}"
+                               Foreground="White" FontSize="15" VerticalAlignment="Center"/>
+                    <Border Grid.Column="1" Background="#1a2a1a" CornerRadius="4"
                             Padding="10,4" VerticalAlignment="Center">
                         <TextBlock Text="● OFFLINE — Contingencia"
-                                   Foreground="#4ade80"
-                                   FontSize="11"
+                                   Foreground="#4ade80" FontSize="11"
                                    FontFamily="Segoe UI Semibold"/>
                     </Border>
                 </Grid>
             </Border>
 
-            <!-- Vista activa -->
             <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}">
                 <ContentControl.Resources>
                     <DataTemplate DataType="{x:Type vm:PosGridViewModel}">
@@ -242,15 +244,14 @@
                     <DataTemplate DataType="{x:Type vm:ClientesViewModel}">
                         <views:ClientesView/>
                     </DataTemplate>
-                    <DataTemplate DataType="{x:Type vm:ConfiguracionViewModel}">
-                        <views:ConfiguracionView/>
-                    </DataTemplate>
                     <DataTemplate DataType="{x:Type vm:HistorialViewModel}">
                         <views:HistorialView/>
                     </DataTemplate>
+                    <DataTemplate DataType="{x:Type vm:ConfiguracionViewModel}">
+                        <views:ConfiguracionView/>
+                    </DataTemplate>
                 </ContentControl.Resources>
             </ContentControl>
-
         </Grid>
     </Grid>
 </Window>
