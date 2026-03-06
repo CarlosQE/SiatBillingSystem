@@ -319,4 +319,13 @@
         </Style.Triggers>
     </Style>
 
+    <!-- ERROR TEXT -->
+    <Style x:Key="ErrorText" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource Danger}"/>
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="Margin" Value="0,2,0,0"/>
+    </Style>
+
 </ResourceDictionary>

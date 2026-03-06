@@ -139,6 +139,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
                         EditNitError = "Ya existe un cliente con este NIT.";
                         return;
                     }
+
                     var nuevo = new ClienteFrecuente
                     {
                         NumeroDocumento = EditNit.Trim(),
@@ -155,6 +156,12 @@ namespace SiatBillingSystem.Desktop.ViewModels
                 }
                 else if (ClienteSeleccionado is not null)
                 {
+                    if (_todosLosClientes.Any(c => c.NumeroDocumento == EditNit.Trim() && c.Id != ClienteSeleccionado.Id))
+                    {
+                        EditNitError = "Ya existe un cliente con este NIT.";
+                        return;
+                    }
+
                     var existente = db.ClientesFrecuentes.Find(ClienteSeleccionado.Id);
                     if (existente is not null)
                     {
@@ -163,6 +170,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
                         existente.Email = EditEmail.Trim();
                         existente.Telefono = EditTelefono.Trim();
                         db.SaveChanges();
+
                         var local = _todosLosClientes.FirstOrDefault(c => c.Id == existente.Id);
                         if (local is not null)
                         {
@@ -196,12 +204,15 @@ namespace SiatBillingSystem.Desktop.ViewModels
             var ok = true;
             EditNitError = string.Empty;
             EditNombreError = string.Empty;
+
             if (string.IsNullOrWhiteSpace(EditNit))
             { EditNitError = "El NIT/CI es obligatorio."; ok = false; }
             else if (!System.Text.RegularExpressions.Regex.IsMatch(EditNit.Trim(), @"^\d+$"))
             { EditNitError = "Solo se permiten numeros."; ok = false; }
+
             if (string.IsNullOrWhiteSpace(EditNombre))
             { EditNombreError = "El nombre es obligatorio."; ok = false; }
+
             return ok;
         }
 

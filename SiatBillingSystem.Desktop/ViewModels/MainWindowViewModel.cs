@@ -4,12 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace SiatBillingSystem.Desktop.ViewModels
 {
-    /// <summary>
-    /// ViewModel de la ventana principal.
-    /// Gestiona navegación entre vistas mediante ContentControl + DataTemplate.
-    /// Cada NavigateTo... pide al contenedor DI una instancia nueva del ViewModel
-    /// (Transient), garantizando estado limpio al volver a una vista.
-    /// </summary>
     public partial class MainWindowViewModel : ObservableObject
     {
         private readonly IServiceProvider _serviceProvider;
@@ -17,24 +11,20 @@ namespace SiatBillingSystem.Desktop.ViewModels
         [ObservableProperty] private ObservableObject? _currentViewModel;
         [ObservableProperty] private string _currentPageTitle = "Grilla POS";
         [ObservableProperty] private bool   _isMenuExpanded   = true;
+        [ObservableProperty] private string _activeSection    = "POS";
 
         public MainWindowViewModel(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-
-            // Vista inicial al arrancar
             NavigateToPos();
         }
-
-        // ─────────────────────────────────────────────────────────────────────
-        // NAVEGACIÓN
-        // ─────────────────────────────────────────────────────────────────────
 
         [RelayCommand]
         private void NavigateToPos()
         {
             CurrentViewModel = _serviceProvider.GetRequiredService<PosGridViewModel>();
             CurrentPageTitle = "Facturación POS  [F1]";
+            ActiveSection    = "POS";
         }
 
         [RelayCommand]
@@ -42,6 +32,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
         {
             CurrentViewModel = _serviceProvider.GetRequiredService<ClientesViewModel>();
             CurrentPageTitle = "Clientes Frecuentes  [F2]";
+            ActiveSection    = "Clientes";
         }
 
         [RelayCommand]
@@ -49,6 +40,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
         {
             CurrentViewModel = _serviceProvider.GetRequiredService<HistorialViewModel>();
             CurrentPageTitle = "Historial de Facturas  [F3]";
+            ActiveSection    = "Historial";
         }
 
         [RelayCommand]
@@ -56,6 +48,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
         {
             CurrentViewModel = _serviceProvider.GetRequiredService<ConfiguracionViewModel>();
             CurrentPageTitle = "Configuración de Empresa  [F10]";
+            ActiveSection    = "Configuracion";
         }
 
         [RelayCommand]
