@@ -61,14 +61,14 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Labels -->
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="NIT / CI Cliente" Style="{StaticResource FieldLabel}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="NIT / CI Cliente"      Style="{StaticResource FieldLabel}"/>
                     <TextBlock Grid.Row="0" Grid.Column="2" Text="Nombre / Razón Social" Style="{StaticResource FieldLabel}"/>
-                    <TextBlock Grid.Row="0" Grid.Column="4" Text="Método de Pago" Style="{StaticResource FieldLabel}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="4" Text="Método de Pago"        Style="{StaticResource FieldLabel}"/>
 
                     <!-- NIT -->
                     <TextBox Grid.Row="1" Grid.Column="0"
                              Text="{Binding NitCliente, UpdateSourceTrigger=PropertyChanged}"
-                             ToolTip="{Binding NitError}">
+                             ToolTip="NIT o Cédula de Identidad del cliente">
                         <TextBox.Style>
                             <Style TargetType="TextBox" BasedOn="{StaticResource PosTextBox}">
                                 <Setter Property="BorderBrush" Value="{StaticResource Danger}"/>
@@ -84,15 +84,14 @@
                         </TextBox.Style>
                     </TextBox>
                     <TextBlock Grid.Row="2" Grid.Column="0"
-                               Text="{Binding NitError}" Style="{StaticResource ErrorText}"
-                               FontSize="10" TextWrapping="Wrap"
-                               Visibility="{Binding NitError,
-                                   Converter={StaticResource StringToVisibilityConverter}}"/>
+                               Text="{Binding NitError}"
+                               Style="{StaticResource ErrorText}"
+                               Visibility="{Binding NitError, Converter={StaticResource StringToVisibilityConverter}}"/>
 
                     <!-- Nombre -->
                     <TextBox Grid.Row="1" Grid.Column="2"
                              Text="{Binding NombreCliente, UpdateSourceTrigger=PropertyChanged}"
-                             ToolTip="{Binding NombreError}">
+                             ToolTip="Nombre completo o razón social">
                         <TextBox.Style>
                             <Style TargetType="TextBox" BasedOn="{StaticResource PosTextBox}">
                                 <Setter Property="BorderBrush" Value="{StaticResource Danger}"/>
@@ -108,12 +107,11 @@
                         </TextBox.Style>
                     </TextBox>
                     <TextBlock Grid.Row="2" Grid.Column="2"
-                               Text="{Binding NombreError}" Style="{StaticResource ErrorText}"
-                               FontSize="10" TextWrapping="Wrap"
-                               Visibility="{Binding NombreError,
-                                   Converter={StaticResource StringToVisibilityConverter}}"/>
+                               Text="{Binding NombreError}"
+                               Style="{StaticResource ErrorText}"
+                               Visibility="{Binding NombreError, Converter={StaticResource StringToVisibilityConverter}}"/>
 
-                    <!-- Método Pago -->
+                    <!-- Método de Pago -->
                     <ComboBox Grid.Row="1" Grid.Column="4"
                               Style="{StaticResource PosComboBox}"
                               ItemsSource="{Binding MetodosPago}"
@@ -126,7 +124,7 @@
                             Width="40" Height="38"
                             Style="{StaticResource BtnOutline}"
                             Command="{Binding BuscarClienteCommand}"
-                            ToolTip="Buscar cliente por NIT">
+                            ToolTip="Buscar cliente por NIT (F3)">
                         <TextBlock Text="⌕" FontSize="16"
                                    Foreground="{StaticResource Accent}"
                                    HorizontalAlignment="Center"
@@ -135,7 +133,7 @@
                 </Grid>
             </Border>
 
-            <!-- ── Área Central: Ítem + Grid ── -->
+            <!-- ── Área Central: Ítem + DataGrid ── -->
             <Grid Grid.Row="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -164,14 +162,14 @@
 
                         <!-- Labels -->
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Descripción del Servicio" Style="{StaticResource FieldLabel}"/>
-                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Cantidad" Style="{StaticResource FieldLabel}"/>
-                        <TextBlock Grid.Row="0" Grid.Column="4" Text="Precio Unitario (Bs.)" Style="{StaticResource FieldLabel}"/>
-                        <TextBlock Grid.Row="0" Grid.Column="6" Text="Descuento (Bs.)" Style="{StaticResource FieldLabel}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Cantidad"                 Style="{StaticResource FieldLabel}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="4" Text="Precio Unitario (Bs.)"    Style="{StaticResource FieldLabel}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="6" Text="Descuento (Bs.)"          Style="{StaticResource FieldLabel}"/>
 
                         <!-- Descripción -->
                         <TextBox Grid.Row="1" Grid.Column="0"
                                  Text="{Binding Descripcion, UpdateSourceTrigger=PropertyChanged}"
-                                 ToolTip="{Binding DescripcionError}">
+                                 ToolTip="Descripción detallada del servicio prestado">
                             <TextBox.Style>
                                 <Style TargetType="TextBox" BasedOn="{StaticResource PosTextBox}">
                                     <Setter Property="BorderBrush" Value="{StaticResource Danger}"/>
@@ -187,7 +185,7 @@
                         <!-- Cantidad -->
                         <TextBox Grid.Row="1" Grid.Column="2"
                                  Text="{Binding Cantidad, UpdateSourceTrigger=PropertyChanged}"
-                                 ToolTip="{Binding CantidadError}">
+                                 ToolTip="Cantidad de unidades o horas">
                             <TextBox.Style>
                                 <Style TargetType="TextBox" BasedOn="{StaticResource PosTextBoxNumber}">
                                     <Setter Property="BorderBrush" Value="{StaticResource Danger}"/>
@@ -200,10 +198,10 @@
                             </TextBox.Style>
                         </TextBox>
 
-                        <!-- Precio -->
+                        <!-- Precio Unitario -->
                         <TextBox Grid.Row="1" Grid.Column="4"
                                  Text="{Binding PrecioUnitario, UpdateSourceTrigger=PropertyChanged}"
-                                 ToolTip="{Binding PrecioError}">
+                                 ToolTip="Precio unitario en bolivianos">
                             <TextBox.Style>
                                 <Style TargetType="TextBox" BasedOn="{StaticResource PosTextBoxNumber}">
                                     <Setter Property="BorderBrush" Value="{StaticResource Danger}"/>
@@ -232,20 +230,17 @@
 
                         <!-- Errores fila 2 -->
                         <TextBlock Grid.Row="2" Grid.Column="0"
-                                   Text="{Binding DescripcionError}" Style="{StaticResource ErrorText}"
-                                   FontSize="10" TextWrapping="Wrap"
-                                   Visibility="{Binding DescripcionError,
-                                       Converter={StaticResource StringToVisibilityConverter}}"/>
+                                   Text="{Binding DescripcionError}"
+                                   Style="{StaticResource ErrorText}"
+                                   Visibility="{Binding DescripcionError, Converter={StaticResource StringToVisibilityConverter}}"/>
                         <TextBlock Grid.Row="2" Grid.Column="2"
-                                   Text="{Binding CantidadError}" Style="{StaticResource ErrorText}"
-                                   FontSize="10" TextWrapping="Wrap"
-                                   Visibility="{Binding CantidadError,
-                                       Converter={StaticResource StringToVisibilityConverter}}"/>
+                                   Text="{Binding CantidadError}"
+                                   Style="{StaticResource ErrorText}"
+                                   Visibility="{Binding CantidadError, Converter={StaticResource StringToVisibilityConverter}}"/>
                         <TextBlock Grid.Row="2" Grid.Column="4"
-                                   Text="{Binding PrecioError}" Style="{StaticResource ErrorText}"
-                                   FontSize="10" TextWrapping="Wrap"
-                                   Visibility="{Binding PrecioError,
-                                       Converter={StaticResource StringToVisibilityConverter}}"/>
+                                   Text="{Binding PrecioError}"
+                                   Style="{StaticResource ErrorText}"
+                                   Visibility="{Binding PrecioError, Converter={StaticResource StringToVisibilityConverter}}"/>
                     </Grid>
                 </Border>
 
@@ -263,11 +258,11 @@
                               IsReadOnly="True"
                               RowHeaderWidth="0">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Descripción" Binding="{Binding Descripcion}" Width="*"/>
-                            <DataGridTextColumn Header="Cantidad" Binding="{Binding Cantidad, StringFormat=N2}" Width="80"/>
-                            <DataGridTextColumn Header="P. Unit." Binding="{Binding PrecioUnitario, StringFormat=N2}" Width="100"/>
-                            <DataGridTextColumn Header="Descuento" Binding="{Binding Descuento, StringFormat=N2}" Width="90"/>
-                            <DataGridTextColumn Header="Subtotal" Binding="{Binding SubTotal, StringFormat=N2}" Width="110"/>
+                            <DataGridTextColumn Header="Descripción" Binding="{Binding Descripcion}"                     Width="*"/>
+                            <DataGridTextColumn Header="Cantidad"    Binding="{Binding Cantidad,       StringFormat=N2}" Width="80"/>
+                            <DataGridTextColumn Header="P. Unit."    Binding="{Binding PrecioUnitario, StringFormat=N2}" Width="100"/>
+                            <DataGridTextColumn Header="Descuento"   Binding="{Binding Descuento,      StringFormat=N2}" Width="90"/>
+                            <DataGridTextColumn Header="Subtotal"    Binding="{Binding SubTotal,       StringFormat=N2}" Width="110"/>
                             <DataGridTemplateColumn Header="Acción" Width="70">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
