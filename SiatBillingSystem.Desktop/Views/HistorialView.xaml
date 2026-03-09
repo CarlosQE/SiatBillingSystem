@@ -1,11 +1,16 @@
 <UserControl x:Class="SiatBillingSystem.Desktop.Views.HistorialView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:SiatBillingSystem.Desktop.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              d:DesignHeight="700" d:DesignWidth="1100"
              Loaded="UserControl_Loaded">
+
+    <UserControl.Resources>
+        <converters:HexColorToBrushConverter x:Key="HexToBrush"/>
+    </UserControl.Resources>
 
     <Grid Background="#1a1a2e">
         <Grid.RowDefinitions>
@@ -54,7 +59,6 @@
                     </TextBox.InputBindings>
                 </TextBox>
 
-                <!-- Botón buscar -->
                 <Button Content="🔍  Buscar" Command="{Binding CargarFacturasCommand}"
                         Margin="12,0,4,0" Padding="14,7" Cursor="Hand"
                         Foreground="White" BorderThickness="0">
@@ -70,7 +74,6 @@
                     </Button.Style>
                 </Button>
 
-                <!-- Accesos rápidos -->
                 <Button Content="Hoy" Command="{Binding FiltrarHoyCommand}"
                         Margin="0,0,4,0" Padding="10,7" Cursor="Hand"
                         Background="#374151" Foreground="White" BorderThickness="0"/>
@@ -98,9 +101,9 @@
                   HorizontalGridLinesBrush="#2d2d4e"
                   HorizontalScrollBarVisibility="Disabled"
                   ColumnHeaderHeight="36"
-                  RowHeight="42">
+                  RowHeight="42"
+                  RowHeaderWidth="0">
 
-            <!-- Doble clic = abrir PDF -->
             <DataGrid.InputBindings>
                 <MouseBinding MouseAction="LeftDoubleClick"
                               Command="{Binding AbrirPdfCommand}"
@@ -159,7 +162,7 @@
                                     Binding="{Binding NitCliente}"
                                     Width="110"/>
 
-                <!-- Nombre cliente — Width="*" para tomar el espacio disponible -->
+                <!-- Nombre cliente -->
                 <DataGridTextColumn Header="CLIENTE / RAZÓN SOCIAL"
                                     Binding="{Binding NombreCliente}"
                                     Width="*" MinWidth="150"/>
@@ -178,15 +181,14 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <!-- Estado con badge de color -->
+                <!-- Estado — badge coloreado usando HexColorToBrushConverter -->
                 <DataGridTemplateColumn Header="ESTADO" Width="135">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Border CornerRadius="4" Padding="6,3" Margin="4,7"
-                                    HorizontalAlignment="Center">
-                                <Border.Background>
-                                    <SolidColorBrush Color="{Binding EstadoColor}"/>
-                                </Border.Background>
+                                    HorizontalAlignment="Center"
+                                    Background="{Binding EstadoColorHex,
+                                        Converter={StaticResource HexToBrush}}">
                                 <TextBlock Text="{Binding EstadoBadge}"
                                            Foreground="White" FontSize="11"
                                            FontWeight="SemiBold"/>
@@ -195,15 +197,16 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- CUF abreviado -->
+                <!-- CUF abreviado — bindea CufCorto, tooltip muestra el CUF completo -->
                 <DataGridTextColumn Header="CUF (extracto)"
                                     Binding="{Binding CufCorto}"
-                                    Width="180">
+                                    Width="200">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="FontFamily" Value="Consolas"/>
                             <Setter Property="FontSize" Value="10"/>
                             <Setter Property="Foreground" Value="#64748b"/>
+                            <Setter Property="ToolTip" Value="{Binding Cuf}"/>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
@@ -237,7 +240,6 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Barra de progreso cuando está cargando -->
                 <ProgressBar Grid.Column="0"
                              IsIndeterminate="{Binding IsCargando}"
                              Height="4" VerticalAlignment="Center"
@@ -255,21 +257,18 @@
                     </ProgressBar.Style>
                 </ProgressBar>
 
-                <!-- Total facturas -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,24,0">
                     <TextBlock Text="Facturas: " Foreground="#94a3b8" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding TotalFacturas}" Foreground="White"
                                FontWeight="Bold" FontSize="14" VerticalAlignment="Center"/>
                 </StackPanel>
 
-                <!-- Pendientes -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,0,24,0">
                     <TextBlock Text="Pend. envío: " Foreground="#94a3b8" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding PendientesEnvio}" Foreground="#f59e0b"
                                FontWeight="Bold" FontSize="14" VerticalAlignment="Center"/>
                 </StackPanel>
 
-                <!-- Monto total -->
                 <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="0,0,16,0">
                     <TextBlock Text="Total: " Foreground="#94a3b8" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding TotalMonto, StringFormat='Bs. {0:N2}'}"
@@ -277,7 +276,6 @@
                                VerticalAlignment="Center"/>
                 </StackPanel>
 
-                <!-- Abrir carpeta -->
                 <Button Grid.Column="4" Content="📁 Carpeta PDFs"
                         Command="{Binding AbrirCarpetaFacturasCommand}"
                         Background="#374151" Foreground="White"

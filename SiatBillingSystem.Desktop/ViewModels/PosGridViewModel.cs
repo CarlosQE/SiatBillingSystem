@@ -261,10 +261,17 @@ namespace SiatBillingSystem.Desktop.ViewModels
                 }
                 else
                 {
-                    // Modo contingencia — CUF calculado localmente sin certificado
-                    var cuf = _invoiceService.CalcularCuf(factura);
-                    factura.Cuf = cuf;
-                    resultado = InvoiceResult.Ok(cuf, string.Empty);
+                        // Modo contingencia — CUF calculado localmente sin certificado
+                        var cuf = _invoiceService.CalcularCuf(factura);
+
+                        if (string.IsNullOrWhiteSpace(cuf))
+                        {
+                            SetStatus("⚠  Error al calcular CUF. Verificá la configuración (NIT, sucursal).", true);
+                            return;
+                        }
+
+                        factura.Cuf = cuf;
+                        resultado   = InvoiceResult.Ok(cuf, string.Empty);
                 }
 
                 if (!resultado.Exitoso)
@@ -310,7 +317,7 @@ namespace SiatBillingSystem.Desktop.ViewModels
                 var modoStr = tieneCertificado ? "en línea" : "contingencia";
                 SetStatus(
                     $"✅  Factura N° {numeroFactura} emitida ({modoStr}).  " +
-                    $"CUF: {factura.Cuf[..Math.Min(16, factura.Cuf.Length)]}...  " +
+                    $"CUF: {(factura.Cuf.Length > 16 ? factura.Cuf[..16] + "…" : factura.Cuf)}" +
                     $"Total: Bs. {MontoTotal:N2}", false);
 
                 LimpiarTodo();
